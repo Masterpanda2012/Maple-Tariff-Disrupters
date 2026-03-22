@@ -11,7 +11,7 @@ import { db } from "~/server/db";
 
 /**
  * NextAuth configuration used by the App Router API route and server helpers.
- * Credentials sign-in uses email + password verified with bcrypt against `User.passwordHash`.
+ * Credentials sign-in uses username + password verified with bcrypt against `User.passwordHash`.
  * JWT and session carry `id`, `role`, and `username` for authorization (business vs customer).
  */
 declare module "next-auth" {
@@ -30,7 +30,7 @@ declare module "next-auth" {
 }
 
 const credentialsSchema = z.object({
-  email: z.string().email(),
+  username: z.string().min(1),
   password: z.string().min(1),
 });
 
@@ -43,18 +43,17 @@ export const authOptions = {
   providers: [
     Credentials({
       credentials: {
-        email: { label: "Email", type: "email" },
+        username: { label: "Username", type: "text" },
         password: { label: "Password", type: "password" },
       },
       authorize: async (credentials) => {
         const parsed = credentialsSchema.safeParse(credentials);
         if (!parsed.success) return null;
 
-        const email = parsed.data.email.toLowerCase().trim();
-        const { password } = parsed.data;
+        const { username, password } = parsed.data;
 
         const user = await db.user.findUnique({
-          where: { email },
+          where: { username },
         });
         if (!user) return null;
 
@@ -64,7 +63,7 @@ export const authOptions = {
         return {
           id: user.id,
           name: user.name ?? user.username,
-          email: user.email ?? email,
+          email: user.email ?? undefined,
           username: user.username,
           role: user.role,
         };

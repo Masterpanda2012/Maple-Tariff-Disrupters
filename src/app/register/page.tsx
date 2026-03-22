@@ -8,7 +8,6 @@ import { useState } from "react";
 export default function RegisterPage() {
   const router = useRouter();
   const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
@@ -21,7 +20,7 @@ export default function RegisterPage() {
       const res = await fetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, email, password }),
+        body: JSON.stringify({ username, password }),
       });
       const data = (await res.json()) as { error?: string };
       if (!res.ok) {
@@ -29,7 +28,7 @@ export default function RegisterPage() {
         return;
       }
       const signInResult = await signIn("credentials", {
-        email,
+        username,
         password,
         redirect: false,
       });
@@ -52,22 +51,10 @@ export default function RegisterPage() {
           Register
         </h1>
         <p className="mb-4 text-center text-sm text-white/70">
-          Username: 3–32 characters. Valid email. Password: at least 8
-          characters.
+          Username: 3–32 characters, letters, numbers, underscores. Password: at
+          least 8 characters.
         </p>
         <form onSubmit={onSubmit} className="flex flex-col gap-4">
-          <label className="flex flex-col gap-1 text-sm">
-            <span className="text-white/80">Email</span>
-            <input
-              name="email"
-              type="email"
-              autoComplete="email"
-              className="rounded-lg border border-white/20 bg-white/10 px-3 py-2 text-white placeholder:text-white/40 focus:border-[hsl(280,100%,70%)] focus:outline-none focus:ring-1 focus:ring-[hsl(280,100%,70%)]"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </label>
           <label className="flex flex-col gap-1 text-sm">
             <span className="text-white/80">Username</span>
             <input

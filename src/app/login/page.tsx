@@ -7,7 +7,7 @@ import { useState } from "react";
 
 export default function LoginPage() {
   const router = useRouter();
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
@@ -18,12 +18,12 @@ export default function LoginPage() {
     setPending(true);
     try {
       const result = await signIn("credentials", {
-        email,
+        username,
         password,
         redirect: false,
       });
       if (result?.error) {
-        setError("Invalid email or password.");
+        setError("Invalid username or password.");
         return;
       }
       router.push("/");
@@ -41,14 +41,13 @@ export default function LoginPage() {
         </h1>
         <form onSubmit={onSubmit} className="flex flex-col gap-4">
           <label className="flex flex-col gap-1 text-sm">
-            <span className="text-white/80">Email</span>
+            <span className="text-white/80">Username</span>
             <input
-              name="email"
-              type="email"
-              autoComplete="email"
+              name="username"
+              autoComplete="username"
               className="rounded-lg border border-white/20 bg-white/10 px-3 py-2 text-white placeholder:text-white/40 focus:border-[hsl(280,100%,70%)] focus:outline-none focus:ring-1 focus:ring-[hsl(280,100%,70%)]"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
               required
             />
           </label>
