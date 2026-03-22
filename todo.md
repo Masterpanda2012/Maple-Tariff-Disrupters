@@ -139,8 +139,8 @@ Build components before the pages that render them.
 - [ ] `src/__tests__/lib/openai.test.ts` — Unit tests for `generateBusinessReport`: happy path returns `{title, report}`, empty news list returns graceful fallback, malformed LLM response throws typed error
 - [ ] `src/__tests__/lib/diffy.test.ts` — Unit tests for `fetchLatestNews`: successful 200 response, non-200 API error, empty array result
 - [ ] `src/__tests__/api/products.test.ts` — Integration tests: `GET` with search filter, `POST` as business user, `POST` as customer user (expect 403), `PATCH` by non-owner (expect 403), `DELETE`
-- [ ] `src/__tests__/api/reviews.test.ts` — Tests: valid 1–5 star review, rating out of range (expect 400), unauthenticated submission (expect 401), business user submitting review (expect 403)
-- [ ] `src/__tests__/api/news-report.test.ts` — Tests: authenticated business user triggers report generation, unauthenticated request (expect 401), customer role request (expect 403)
+- [x] `src/__tests__/api/reviews.test.ts` — Tests: valid 1–5 star review, rating out of range (expect 400), unauthenticated submission (expect 401), business user submitting review (expect 403)
+- [x] `src/__tests__/api/news-report.test.ts` — Tests: authenticated business user triggers report generation, unauthenticated request (expect 401), customer role request (expect 403)
 
 ---
 
