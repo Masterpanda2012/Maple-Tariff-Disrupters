@@ -1,5 +1,4 @@
 import cron from "node-cron";
-import { Prisma } from "../../generated/prisma";
 
 import { fetchLatestNews } from "./diffy";
 import { db } from "~/server/db";
@@ -17,13 +16,13 @@ export async function syncNewsArticlesFromDiffy(): Promise<void> {
         title: article.title,
         url: article.url,
         summary: article.summary,
-        tags: article.tags as Prisma.InputJsonValue,
+        tags: article.tags,
         publishedAt: article.publishedAt,
       },
       update: {
         title: article.title,
         summary: article.summary,
-        tags: article.tags as Prisma.InputJsonValue,
+        tags: article.tags,
         publishedAt: article.publishedAt,
       },
     });
