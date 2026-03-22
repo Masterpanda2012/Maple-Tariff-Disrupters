@@ -10,6 +10,21 @@ const llmReportSchema = z.object({
   report: z.string().min(1),
 });
 
+/** Raised when the model response is missing, not JSON, or fails `{ title, report }` validation. */
+export class BusinessReportResponseError extends Error {
+  readonly code: "empty_content" | "invalid_json" | "invalid_schema";
+
+  constructor(
+    code: BusinessReportResponseError["code"],
+    message: string,
+    options?: ErrorOptions,
+  ) {
+    super(message, options);
+    this.name = "BusinessReportResponseError";
+    this.code = code;
+  }
+}
+
 let openaiSingleton: OpenAI | undefined;
 
 function getOpenAI(): OpenAI {
@@ -117,20 +132,29 @@ export async function generateBusinessReport(
 
   const raw = completion.choices[0]?.message?.content;
   if (!raw) {
-    throw new Error("OpenAI returned no message content for the business report.");
+    throw new BusinessReportResponseError(
+      "empty_content",
+      "OpenAI returned no message content for the business report.",
+    );
   }
 
   let parsed: unknown;
   try {
     parsed = JSON.parse(raw);
-  } catch {
-    throw new Error("OpenAI returned non-JSON content for the business report.");
+  } catch (e) {
+    throw new BusinessReportResponseError(
+      "invalid_json",
+      "OpenAI returned non-JSON content for the business report.",
+      { cause: e },
+    );
   }
 
   const result = llmReportSchema.safeParse(parsed);
   if (!result.success) {
-    throw new Error(
+    throw new BusinessReportResponseError(
+      "invalid_schema",
       `OpenAI JSON did not match the expected shape: ${result.error.message}`,
+      { cause: result.error },
     );
   }
 

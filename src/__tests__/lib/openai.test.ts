@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { BusinessProfile, NewsArticle } from "../../generated/prisma";
+
+import type { BusinessProfile, NewsArticle } from "../../../generated/prisma";
 
 const hoisted = vi.hoisted(() => ({
   completionsCreate: vi.fn(),
@@ -58,7 +59,7 @@ describe("generateBusinessReport", () => {
   });
 
   it("returns a fixed message when there are no articles (no OpenAI call)", async () => {
-    const { generateBusinessReport } = await import("./openai");
+    const { generateBusinessReport } = await import("~/lib/openai");
     const out = await generateBusinessReport([], profile);
     expect(out.title).toBe("No matching news yet");
     expect(out.report).toContain("no tagged news articles");
@@ -67,21 +68,44 @@ describe("generateBusinessReport", () => {
 
   it("calls OpenAI and returns parsed title and report", async () => {
     vi.resetModules();
-    const { generateBusinessReport } = await import("./openai");
+    const { generateBusinessReport } = await import("~/lib/openai");
     const out = await generateBusinessReport([article], profile);
     expect(out.title).toBe("Steel tariffs and your supply chain");
     expect(out.report).toContain("Short-term");
     expect(hoisted.completionsCreate).toHaveBeenCalledTimes(1);
   });
 
-  it("throws when the model returns invalid JSON", async () => {
+  it("throws BusinessReportResponseError when the model returns invalid JSON", async () => {
     vi.resetModules();
     hoisted.completionsCreate.mockResolvedValueOnce({
       choices: [{ message: { content: "not json" } }],
     });
-    const { generateBusinessReport } = await import("./openai");
-    await expect(generateBusinessReport([article], profile)).rejects.toThrow(
-      "non-JSON",
+    const { generateBusinessReport, BusinessReportResponseError } =
+      await import("~/lib/openai");
+    const err = await generateBusinessReport([article], profile).catch((e) => e);
+    expect(err).toBeInstanceOf(BusinessReportResponseError);
+    expect((err as InstanceType<typeof BusinessReportResponseError>).code).toBe(
+      "invalid_json",
+    );
+  });
+
+  it("throws BusinessReportResponseError when JSON does not match { title, report }", async () => {
+    vi.resetModules();
+    hoisted.completionsCreate.mockResolvedValueOnce({
+      choices: [
+        {
+          message: {
+            content: JSON.stringify({ title: "Only title" }),
+          },
+        },
+      ],
+    });
+    const { generateBusinessReport, BusinessReportResponseError } =
+      await import("~/lib/openai");
+    const err = await generateBusinessReport([article], profile).catch((e) => e);
+    expect(err).toBeInstanceOf(BusinessReportResponseError);
+    expect((err as InstanceType<typeof BusinessReportResponseError>).code).toBe(
+      "invalid_schema",
     );
   });
 });
