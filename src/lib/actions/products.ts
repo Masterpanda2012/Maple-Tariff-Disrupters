@@ -1,4 +1,4 @@
-import type { Prisma } from "../../../generated/prisma";
+import type { Prisma, Product } from "../../../generated/prisma";
 
 import type { ProductWithBusiness } from "~/types";
 import { db } from "~/server/db";
@@ -117,7 +117,7 @@ export type CreateProductData = {
  *
  * **Bad path:** Prisma throws if `businessId` is invalid (foreign key) or required fields are missing.
  */
-export async function createProduct(data: CreateProductData) {
+export async function createProduct(data: CreateProductData): Promise<Product> {
   return db.product.create({
     data: {
       businessId: data.businessId,
@@ -147,7 +147,10 @@ export type UpdateProductData = {
  *
  * **Bad path:** Prisma throws `P2025` if `id` does not exist (record not found).
  */
-export async function updateProduct(id: string, data: UpdateProductData) {
+export async function updateProduct(
+  id: string,
+  data: UpdateProductData,
+): Promise<Product> {
   return db.product.update({
     where: { id },
     data: {
@@ -168,7 +171,7 @@ export async function updateProduct(id: string, data: UpdateProductData) {
  *
  * **Bad path:** Prisma throws `P2025` if the id does not exist.
  */
-export async function deleteProduct(id: string) {
+export async function deleteProduct(id: string): Promise<Product> {
   return db.product.delete({
     where: { id },
   });

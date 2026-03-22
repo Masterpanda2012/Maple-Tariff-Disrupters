@@ -60,11 +60,11 @@ Reusable data-access functions called by API routes. Each file should use Prisma
 ## Phase 6 — API Routes (depends on: Phase 4 + Phase 5)
 
 ### Business Onboarding
-- [ ] `src/app/api/business/onboarding/route.ts` — `POST` — Auth-gated (BUSINESS role); calls `upsertBusinessProfile`; returns updated profile
+- [x] `src/app/api/business/onboarding/route.ts` — `POST` — Auth-gated (BUSINESS role); calls `upsertBusinessProfile`; returns updated profile
 
 ### Products
-- [ ] `src/app/api/products/route.ts` — `GET` supports `?search=`, `?tag=`, `?page=` via `getProducts`; `POST` auth-gated to BUSINESS role, calls `createProduct`
-- [ ] `src/app/api/products/[id]/route.ts` — `GET` returns product + reviews via `getProductById`; `PATCH` + `DELETE` auth-gated to the owning business
+- [x] `src/app/api/products/route.ts` — `GET` supports `?search=`, `?tag=`, `?page=` via `getProducts`; `POST` auth-gated to BUSINESS role, calls `createProduct`
+- [x] `src/app/api/products/[id]/route.ts` — `GET` returns product + reviews via `getProductById`; `PATCH` + `DELETE` auth-gated to the owning business
 
 ### Reviews
 - [x] `src/app/api/products/[id]/reviews/route.ts` — `GET` lists reviews; `POST` auth-gated to CUSTOMER role, calls `createReview`
@@ -87,6 +87,12 @@ Build these in isolation — they are pure presentational components with no dat
 - [x] `src/components/ui/NewsReportCard.tsx` — Card displaying report title, body excerpt, generated date, and a list of clickable source article links
 - [x] `src/components/layout/Footer.tsx` — Simple footer with logo, tagline, and copyright
 - [x] `src/components/layout/Navbar.tsx` — Top nav: logo, role-aware links (business dashboard vs. marketplace), auth state (sign in / user menu with sign out); uses NextAuth `useSession`
+- [x] `src/components/ui/Button.tsx` — Reusable button with variants: `primary` (maple red), `secondary` (outlined), `ghost`; accepts `isLoading` prop
+- [x] `src/components/ui/StarRating.tsx` — Renders 1–5 stars; accepts `value` and optional `onChange` for interactive mode vs. display mode
+- [x] `src/components/ui/ProductCard.tsx` — Card with product image, name, price, average star rating, and business name; links to `/marketplace/[id]`; uses `StarRating`
+- [ ] `src/components/ui/NewsReportCard.tsx` — Card displaying report title, body excerpt, generated date, and a list of clickable source article links
+- [ ] `src/components/layout/Footer.tsx` — Simple footer with logo, tagline, and copyright
+- [ ] `src/components/layout/Navbar.tsx` — Top nav: logo, role-aware links (business dashboard vs. marketplace), auth state (sign in / user menu with sign out); uses NextAuth `useSession`
 
 ---
 
