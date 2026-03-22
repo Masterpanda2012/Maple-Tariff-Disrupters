@@ -30,8 +30,8 @@ Items within a phase have no inter-dependencies and can be built in parallel.
 
 These are pure utility modules with no UI or routing dependencies.
 
-- [ ] `src/lib/prisma.ts` — Singleton Prisma client (prevents connection pool exhaustion in dev)
-- [ ] `src/lib/openai.ts` — OpenAI client singleton; export `generateBusinessReport(newsItems: NewsArticle[], profile: BusinessProfile): Promise<{ title: string; report: string }>` — queries relevant news then returns a structured LLM-generated summary with action steps
+- [x] `src/lib/prisma.ts` — Singleton Prisma client (prevents connection pool exhaustion in dev)
+- [x] `src/lib/openai.ts` — OpenAI client singleton; export `generateBusinessReport(newsItems: NewsArticle[], profile: BusinessProfile): Promise<{ title: string; report: string }>` — queries relevant news then returns a structured LLM-generated summary with action steps
 - [ ] `src/lib/diffy.ts` — Export `fetchLatestNews(): Promise<NewsArticle[]>` — HTTP client that calls the Diffy API and normalizes the response into `NewsArticle` objects
 - [ ] `src/lib/news-cron.ts` — Export `startNewsCron()` — uses `node-cron` to run hourly; calls `fetchLatestNews()` and upserts articles into the DB via Prisma
 
