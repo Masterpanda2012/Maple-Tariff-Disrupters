@@ -3,6 +3,7 @@ import { type DefaultSession, type NextAuthConfig } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { z } from "zod";
 
+import { UserRole } from "../../../generated/prisma";
 import { db } from "~/server/db";
 
 const credentialsSchema = z.object({
@@ -21,11 +22,21 @@ declare module "next-auth" {
     user: {
       id: string;
       username: string;
+      role: UserRole;
     } & DefaultSession["user"];
   }
 
   interface User {
     username: string;
+    role: UserRole;
+  }
+}
+
+declare module "next-auth/jwt" {
+  interface JWT {
+    id?: string;
+    username?: string;
+    role?: UserRole;
   }
 }
 
@@ -62,6 +73,7 @@ export const authConfig = {
           id: user.id,
           name: user.name ?? user.username,
           username: user.username,
+          role: user.role,
         };
       },
     }),
@@ -69,20 +81,30 @@ export const authConfig = {
   callbacks: {
     jwt: ({ token, user }) => {
       if (user) {
-        const t = token as typeof token & { id?: string; username?: string };
+        const t = token as typeof token & {
+          id?: string;
+          username?: string;
+          role?: UserRole;
+        };
         t.id = user.id;
         t.username = user.username;
+        t.role = user.role;
       }
       return token;
     },
     session: ({ session, token }) => {
-      const t = token as typeof token & { id?: string; username?: string };
+      const t = token as typeof token & {
+        id?: string;
+        username?: string;
+        role?: UserRole;
+      };
       return {
         ...session,
         user: {
           ...session.user,
           id: t.id ?? t.sub!,
           username: t.username ?? "",
+          role: t.role ?? UserRole.CUSTOMER,
         },
       };
     },

@@ -2,6 +2,7 @@ import { hash } from "bcryptjs";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
+import { UserRole } from "../../../../../generated/prisma";
 import { db } from "~/server/db";
 
 const registerSchema = z.object({
@@ -11,6 +12,7 @@ const registerSchema = z.object({
     .max(32)
     .regex(/^[a-zA-Z0-9_]+$/),
   password: z.string().min(8).max(128),
+  role: z.nativeEnum(UserRole).optional(),
 });
 
 export async function POST(request: Request) {
@@ -29,7 +31,7 @@ export async function POST(request: Request) {
     );
   }
 
-  const { username, password } = parsed.data;
+  const { username, password, role } = parsed.data;
   const passwordHash = await hash(password, 12);
 
   try {
@@ -38,8 +40,9 @@ export async function POST(request: Request) {
         username,
         passwordHash,
         name: username,
+        role: role ?? UserRole.CUSTOMER,
       },
-      select: { id: true, username: true },
+      select: { id: true, username: true, role: true },
     });
     return NextResponse.json({ user }, { status: 201 });
   } catch (e: unknown) {
