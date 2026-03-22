@@ -58,7 +58,6 @@ export default async function MarketplaceProductPage({ params }: PageProps) {
                 className="object-cover"
                 sizes="(max-width: 768px) 100vw, 42rem"
                 priority
-                unoptimized
               />
             ) : (
               <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-cream to-charcoal/5 text-charcoal/40">

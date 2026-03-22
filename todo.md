@@ -146,5 +146,5 @@ Build components before the pages that render them.
 
 ## Phase 12 — Deployment Config (depends on: all phases complete)
 
-- [ ] `next.config.ts` — Configure `images.remotePatterns` to allow external product image URLs; expose `NEXT_PUBLIC_APP_URL` env var
+- [x] `next.config.ts` — Configure `images.remotePatterns` to allow external product image URLs; expose `NEXT_PUBLIC_APP_URL` env var
 - [ ] `vercel.json` — Add cron job: `{ "path": "/api/cron/fetch-news", "schedule": "0 * * * *" }` to trigger hourly news fetch
