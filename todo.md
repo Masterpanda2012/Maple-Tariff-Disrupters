@@ -15,14 +15,14 @@ Items within a phase have no inter-dependencies and can be built in parallel.
 
 ## Phase 2 — Types & Schema (depends on: Phase 1)
 
-- [ ] `src/types/index.ts` — Define shared TypeScript interfaces: `UserRole` (`BUSINESS | CUSTOMER`), `ProductWithBusiness`, `ReviewWithAuthor`, `NewsReportWithSources`
-- [ ] `prisma/schema.prisma` — Define `User` model: `id`, `email`, `name`, `passwordHash`, `role`, `createdAt`
-- [ ] `prisma/schema.prisma` — Define `BusinessProfile` model: `id`, `userId`, `companyName`, `industry`, `suppliers`, `mission`, `description`, `isVerified` (default `false`)
-- [ ] `prisma/schema.prisma` — Define `Product` model: `id`, `businessId`, `name`, `description`, `price`, `inventory`, `imageUrl`, `tags`, `createdAt`
-- [ ] `prisma/schema.prisma` — Define `Review` model: `id`, `productId`, `customerId`, `rating` (1–5), `body`, `createdAt`
-- [ ] `prisma/schema.prisma` — Define `NewsArticle` model: `id`, `title`, `url`, `summary`, `tags` (string array), `publishedAt`, `createdAt`
-- [ ] `prisma/schema.prisma` — Define `BusinessNewsReport` model: `id`, `businessId`, `reportTitle`, `reportBody`, `sourceArticleIds`, `createdAt`
-- [ ] Run `npx prisma migrate dev --name init` and `npx prisma generate` to create the DB and generate the client
+- [x] `src/types/index.ts` — Define shared TypeScript interfaces: `UserRole` (`BUSINESS | CUSTOMER`), `ProductWithBusiness`, `ReviewWithAuthor`, `NewsReportWithSources`
+- [x] `prisma/schema.prisma` — Define `User` model: `id`, `email`, `name`, `passwordHash`, `role`, `createdAt`
+- [x] `prisma/schema.prisma` — Define `BusinessProfile` model: `id`, `userId`, `companyName`, `industry`, `suppliers`, `mission`, `description`, `isVerified` (default `false`)
+- [x] `prisma/schema.prisma` — Define `Product` model: `id`, `businessId`, `name`, `description`, `price`, `inventory`, `imageUrl`, `tags`, `createdAt`
+- [x] `prisma/schema.prisma` — Define `Review` model: `id`, `productId`, `customerId`, `rating` (1–5), `body`, `createdAt`
+- [x] `prisma/schema.prisma` — Define `NewsArticle` model: `id`, `title`, `url`, `summary`, `tags` (string array), `publishedAt`, `createdAt`
+- [x] `prisma/schema.prisma` — Define `BusinessNewsReport` model: `id`, `businessId`, `reportTitle`, `reportBody`, `sourceArticleIds`, `createdAt`
+- [x] Run `npx prisma migrate dev --name init` and `npx prisma generate` to create the DB and generate the client
 
 ---
 
