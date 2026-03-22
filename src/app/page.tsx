@@ -16,6 +16,9 @@ export default async function HomePage() {
                 Signed in as{" "}
                 <span className="font-semibold text-[hsl(280,100%,70%)]">
                   {session.user.username}
+                </span>{" "}
+                <span className="rounded bg-white/10 px-2 py-0.5 text-xs text-white/70">
+                  {session.user.role}
                 </span>
               </p>
               <form action={signOutAction}>
