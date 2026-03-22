@@ -35,15 +35,16 @@ describe("fetchLatestNews", () => {
     expect(articles[0].title).toBe("Tariff news");
     expect(articles[0].url).toBe("https://example.com/news/1");
     expect(articles[0].summary).toBe("Summary text");
-    expect(fetchMock).toHaveBeenCalledWith(
-      "https://diffy.example.test/api/news",
-      expect.objectContaining({
-        method: "GET",
-        headers: expect.objectContaining({
-          Authorization: "Bearer sk-diffy-test",
-        }),
-      }),
-    );
+    expect(fetchMock).toHaveBeenCalled();
+    const call = fetchMock.mock.calls[0];
+    expect(call).toBeDefined();
+    const url = call![0] as string;
+    const init = call![1] as RequestInit;
+    expect(url).toBe("https://diffy.example.test/api/news");
+    expect(init).toMatchObject({
+      method: "GET",
+      headers: { Authorization: "Bearer sk-diffy-test" },
+    });
   });
 
   it("throws on non-OK HTTP status", async () => {

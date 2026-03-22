@@ -82,11 +82,14 @@ describe("generateBusinessReport", () => {
     });
     const { generateBusinessReport, BusinessReportResponseError } =
       await import("~/lib/openai");
-    const err = await generateBusinessReport([article], profile).catch((e) => e);
+    const err: unknown = await generateBusinessReport(
+      [article],
+      profile,
+    ).catch((e: unknown) => e);
     expect(err).toBeInstanceOf(BusinessReportResponseError);
-    expect((err as InstanceType<typeof BusinessReportResponseError>).code).toBe(
-      "invalid_json",
-    );
+    if (err instanceof BusinessReportResponseError) {
+      expect(err.code).toBe("invalid_json");
+    }
   });
 
   it("throws BusinessReportResponseError when JSON does not match { title, report }", async () => {
@@ -102,10 +105,13 @@ describe("generateBusinessReport", () => {
     });
     const { generateBusinessReport, BusinessReportResponseError } =
       await import("~/lib/openai");
-    const err = await generateBusinessReport([article], profile).catch((e) => e);
+    const err: unknown = await generateBusinessReport(
+      [article],
+      profile,
+    ).catch((e: unknown) => e);
     expect(err).toBeInstanceOf(BusinessReportResponseError);
-    expect((err as InstanceType<typeof BusinessReportResponseError>).code).toBe(
-      "invalid_schema",
-    );
+    if (err instanceof BusinessReportResponseError) {
+      expect(err.code).toBe("invalid_schema");
+    }
   });
 });

@@ -33,7 +33,10 @@ export default async function EditProductPage(context: RouteContext) {
 
   const { id } = await context.params;
   const product = await getProductById(id);
-  if (!product || product.businessId !== profile.id) {
+  if (!product) {
+    redirect("/business/products");
+  }
+  if (product.businessId !== profile.id) {
     redirect("/business/products");
   }
 

@@ -55,7 +55,6 @@ export function ProductCard({
             fill
             className="object-cover transition group-hover:scale-[1.02]"
             sizes="(max-width: 768px) 100vw, 33vw"
-            unoptimized
           />
         ) : (
           <div

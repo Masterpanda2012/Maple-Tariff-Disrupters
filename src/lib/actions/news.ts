@@ -4,9 +4,6 @@ import type { Prisma } from "../../../generated/prisma";
 import type { BusinessProfile, NewsArticle } from "../../../generated/prisma";
 import { db } from "~/server/db";
 
-/** Re-export: single implementation lives in `business.ts`. */
-export { getLatestBusinessReportWithSources } from "~/lib/actions/business";
-
 /** Payload for persisting a generated report; maps to `BusinessNewsReport` fields. */
 export type SaveBusinessReportInput = {
   title: string;
