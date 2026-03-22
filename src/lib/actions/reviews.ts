@@ -1,3 +1,5 @@
+import type { Review } from "../../../generated/prisma";
+
 import type { ReviewWithAuthor } from "~/types";
 import { db } from "~/server/db";
 
@@ -39,7 +41,7 @@ export async function createReview(
   productId: string,
   customerId: string,
   data: CreateReviewData,
-) {
+): Promise<Review> {
   const { rating, body } = data;
   if (!Number.isInteger(rating) || rating < 1 || rating > 5) {
     throw new RangeError("rating must be an integer from 1 to 5");

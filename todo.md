@@ -60,11 +60,11 @@ Reusable data-access functions called by API routes. Each file should use Prisma
 ## Phase 6 — API Routes (depends on: Phase 4 + Phase 5)
 
 ### Business Onboarding
-- [ ] `src/app/api/business/onboarding/route.ts` — `POST` — Auth-gated (BUSINESS role); calls `upsertBusinessProfile`; returns updated profile
+- [x] `src/app/api/business/onboarding/route.ts` — `POST` — Auth-gated (BUSINESS role); calls `upsertBusinessProfile`; returns updated profile
 
 ### Products
-- [ ] `src/app/api/products/route.ts` — `GET` supports `?search=`, `?tag=`, `?page=` via `getProducts`; `POST` auth-gated to BUSINESS role, calls `createProduct`
-- [ ] `src/app/api/products/[id]/route.ts` — `GET` returns product + reviews via `getProductById`; `PATCH` + `DELETE` auth-gated to the owning business
+- [x] `src/app/api/products/route.ts` — `GET` supports `?search=`, `?tag=`, `?page=` via `getProducts`; `POST` auth-gated to BUSINESS role, calls `createProduct`
+- [x] `src/app/api/products/[id]/route.ts` — `GET` returns product + reviews via `getProductById`; `PATCH` + `DELETE` auth-gated to the owning business
 
 ### Reviews
 - [x] `src/app/api/products/[id]/reviews/route.ts` — `GET` lists reviews; `POST` auth-gated to CUSTOMER role, calls `createReview`

@@ -21,7 +21,8 @@ function parseArticleTags(tags: Prisma.JsonValue): string[] {
   if (tags === null || tags === undefined) return [];
   if (Array.isArray(tags)) {
     return tags
-      .map((t) => normalizeTag(String(t)))
+      .filter((t): t is string => typeof t === "string")
+      .map((t) => normalizeTag(t))
       .filter((t) => t.length > 0);
   }
   return [];
