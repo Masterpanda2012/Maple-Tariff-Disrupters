@@ -8,7 +8,7 @@ import { db } from "~/server/db";
  * Pulls articles from Diffy and upserts them by `url` (unique) so hourly runs refresh titles,
  * summaries, tags, and `publishedAt` without duplicating rows.
  */
-export async function syncNewsArticlesFromDiffy(): Promise<void> {
+export async function syncNewsArticlesFromDiffy(): Promise<number> {
   const articles = await fetchLatestNews();
   for (const article of articles) {
     await db.newsArticle.upsert({
@@ -28,6 +28,7 @@ export async function syncNewsArticlesFromDiffy(): Promise<void> {
       },
     });
   }
+  return articles.length;
 }
 
 /**

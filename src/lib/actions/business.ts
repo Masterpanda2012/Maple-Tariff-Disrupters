@@ -51,12 +51,31 @@ export async function upsertBusinessProfile(
   });
 }
 
+export type GetBusinessReportsOptions = {
+  page?: number;
+  pageSize?: number;
+};
+
 /**
- * Lists saved news reports for a business profile, newest first.
+ * Lists saved news reports for a business profile, newest first, with optional pagination.
  */
-export async function getBusinessReports(businessId: string) {
-  return db.businessNewsReport.findMany({
-    where: { businessId },
-    orderBy: { createdAt: "desc" },
-  });
+export async function getBusinessReports(
+  businessId: string,
+  options?: GetBusinessReportsOptions,
+) {
+  const page = Math.max(1, options?.page ?? 1);
+  const pageSize = Math.min(100, Math.max(1, options?.pageSize ?? 10));
+  const skip = (page - 1) * pageSize;
+
+  const [items, total] = await Promise.all([
+    db.businessNewsReport.findMany({
+      where: { businessId },
+      orderBy: { createdAt: "desc" },
+      skip,
+      take: pageSize,
+    }),
+    db.businessNewsReport.count({ where: { businessId } }),
+  ]);
+
+  return { items, total, page, pageSize };
 }

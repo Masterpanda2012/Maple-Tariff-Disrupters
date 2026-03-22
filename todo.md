@@ -67,13 +67,13 @@ Reusable data-access functions called by API routes. Each file should use Prisma
 - [ ] `src/app/api/products/[id]/route.ts` — `GET` returns product + reviews via `getProductById`; `PATCH` + `DELETE` auth-gated to the owning business
 
 ### Reviews
-- [ ] `src/app/api/products/[id]/reviews/route.ts` — `GET` lists reviews; `POST` auth-gated to CUSTOMER role, calls `createReview`
+- [x] `src/app/api/products/[id]/reviews/route.ts` — `GET` lists reviews; `POST` auth-gated to CUSTOMER role, calls `createReview`
 
 ### Business News & Reports
-- [ ] `src/app/api/business/news-report/route.ts` — `GET` returns paginated past reports via `getBusinessReports`; `POST` fetches relevant news → calls `generateBusinessReport` → calls `saveBusinessReport` → returns the new report
+- [x] `src/app/api/business/news-report/route.ts` — `GET` returns paginated past reports via `getBusinessReports`; `POST` fetches relevant news → calls `generateBusinessReport` → calls `saveBusinessReport` → returns the new report
 
 ### Cron Trigger
-- [ ] `src/app/api/cron/fetch-news/route.ts` — `GET` secured by comparing `Authorization` header to `CRON_SECRET`; calls `fetchLatestNews()` and upserts articles; returns count of articles saved
+- [x] `src/app/api/cron/fetch-news/route.ts` — `GET` secured by comparing `Authorization` header to `CRON_SECRET`; calls `fetchLatestNews()` and upserts articles; returns count of articles saved
 
 ---
 
