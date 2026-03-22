@@ -1,6 +1,6 @@
 import type { Prisma, Product } from "../../../generated/prisma";
 
-import type { ProductWithBusiness } from "~/types";
+import type { ProductListItem, ProductWithBusiness } from "~/types";
 import { db } from "~/server/db";
 
 /** Default page size for marketplace-style listings (used with `page`). */
@@ -13,7 +13,7 @@ export type ProductFilters = {
 };
 
 export type GetProductsResult = {
-  products: ProductWithBusiness[];
+  products: ProductListItem[];
   total: number;
   page: number;
   pageSize: number;
@@ -81,7 +81,29 @@ export async function getProducts(
     db.product.count({ where }),
   ]);
 
-  return { products, total, page, pageSize };
+  const productIds = products.map((p) => p.id);
+  const averages =
+    productIds.length > 0
+      ? await db.review.groupBy({
+          by: ["productId"],
+          where: { productId: { in: productIds } },
+          _avg: { rating: true },
+        })
+      : [];
+
+  const avgMap = new Map(
+    averages.map((a) => [
+      a.productId,
+      a._avg.rating != null ? Number(a._avg.rating) : 0,
+    ]),
+  );
+
+  const productsWithAvg: ProductListItem[] = products.map((p) => ({
+    ...p,
+    averageRating: avgMap.get(p.id) ?? 0,
+  }));
+
+  return { products: productsWithAvg, total, page, pageSize };
 }
 
 /**
@@ -101,9 +123,6 @@ export async function getProductById(
 }
 
 /**
- * Lists all products for a business profile, newest first, for inventory / admin screens.
- */
-export async function getProductsForBusiness(
  * Lists all products owned by a business profile, newest first.
  */
 export async function getProductsByBusinessId(

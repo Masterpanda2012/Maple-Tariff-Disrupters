@@ -15,6 +15,11 @@ export type ProductWithBusiness = Product & {
   business: BusinessProfile;
 };
 
+/** Marketplace list row: product + business + computed average review score. */
+export type ProductListItem = ProductWithBusiness & {
+  averageRating: number;
+};
+
 /** Review with the customer who wrote it. */
 export type ReviewWithAuthor = Review & {
   customer: Pick<User, "id" | "name" | "email">;
