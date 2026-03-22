@@ -7,9 +7,9 @@ Items within a phase have no inter-dependencies and can be built in parallel.
 
 ## Phase 1 — Project Config (no dependencies)
 
-- [ ] `package.json` — Add missing dependencies: `prisma`, `@prisma/client`, `next-auth`, `openai`, `zod`, `node-cron`, `date-fns`, `bcryptjs`, `@types/bcryptjs`
-- [ ] `tailwind.config.ts` — Configure Tailwind with Canadian-maple brand palette (maple red `#C41230`, off-white `#F8F4EF`, dark charcoal `#1A1A1A`)
-- [ ] `.env.example` — Document all required env vars: `DATABASE_URL`, `NEXTAUTH_SECRET`, `OPENAI_API_KEY`, `DIFFY_API_KEY`, `CRON_SECRET`
+- [x] `package.json` — Add missing dependencies: `prisma`, `@prisma/client`, `next-auth`, `openai`, `zod`, `node-cron`, `date-fns`, `bcryptjs`, `@types/bcryptjs`
+- [x] `tailwind.config.ts` — Configure Tailwind with Canadian-maple brand palette (maple red `#C41230`, off-white `#F8F4EF`, dark charcoal `#1A1A1A`)
+- [x] `.env.example` — Document all required env vars: `DATABASE_URL`, `NEXTAUTH_SECRET`, `OPENAI_API_KEY`, `DIFFY_API_KEY`, `CRON_SECRET`
 
 ---
 
