@@ -84,9 +84,9 @@ Build these in isolation — they are pure presentational components with no dat
 - [ ] `src/components/ui/Button.tsx` — Reusable button with variants: `primary` (maple red), `secondary` (outlined), `ghost`; accepts `isLoading` prop
 - [ ] `src/components/ui/StarRating.tsx` — Renders 1–5 stars; accepts `value` and optional `onChange` for interactive mode vs. display mode
 - [ ] `src/components/ui/ProductCard.tsx` — Card with product image, name, price, average star rating, and business name; links to `/marketplace/[id]`; uses `StarRating`
-- [ ] `src/components/ui/NewsReportCard.tsx` — Card displaying report title, body excerpt, generated date, and a list of clickable source article links
-- [ ] `src/components/layout/Footer.tsx` — Simple footer with logo, tagline, and copyright
-- [ ] `src/components/layout/Navbar.tsx` — Top nav: logo, role-aware links (business dashboard vs. marketplace), auth state (sign in / user menu with sign out); uses NextAuth `useSession`
+- [x] `src/components/ui/NewsReportCard.tsx` — Card displaying report title, body excerpt, generated date, and a list of clickable source article links
+- [x] `src/components/layout/Footer.tsx` — Simple footer with logo, tagline, and copyright
+- [x] `src/components/layout/Navbar.tsx` — Top nav: logo, role-aware links (business dashboard vs. marketplace), auth state (sign in / user menu with sign out); uses NextAuth `useSession`
 
 ---
 
