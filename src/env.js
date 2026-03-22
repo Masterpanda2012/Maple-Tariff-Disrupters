@@ -11,6 +11,7 @@ export const env = createEnv({
     DATABASE_URL: z.string().min(1),
     OPENAI_API_KEY: z.string().min(1).optional(),
     DIFFY_API_KEY: z.string().min(1).optional(),
+    DIFFY_API_URL: z.string().url().optional(),
     CRON_SECRET: z.string().min(1).optional(),
     NODE_ENV: z
       .enum(["development", "test", "production"])
@@ -35,6 +36,7 @@ export const env = createEnv({
     DATABASE_URL: process.env.DATABASE_URL,
     OPENAI_API_KEY: process.env.OPENAI_API_KEY,
     DIFFY_API_KEY: process.env.DIFFY_API_KEY,
+    DIFFY_API_URL: process.env.DIFFY_API_URL,
     CRON_SECRET: process.env.CRON_SECRET,
     NODE_ENV: process.env.NODE_ENV,
   },
