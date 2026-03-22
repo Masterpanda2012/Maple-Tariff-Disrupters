@@ -39,8 +39,8 @@ These are pure utility modules with no UI or routing dependencies.
 
 ## Phase 4 — Authentication (depends on: Phase 3)
 
-- [ ] `src/lib/auth.ts` — Configure NextAuth `authOptions` with a credentials provider (email + bcrypt password check against DB); attach `role` and `id` to the JWT and session
-- [ ] `src/app/api/auth/[...nextauth]/route.ts` — Wire NextAuth route handler using `authOptions`
+- [x] `src/lib/auth.ts` — Configure NextAuth `authOptions` with a credentials provider (username + bcrypt password check against DB); attach `role` and `id` to the JWT and session
+- [x] `src/app/api/auth/[...nextauth]/route.ts` — Wire NextAuth route handler using `authOptions`
 - [x] `src/app/api/auth/register/route.ts` — `POST` — Validate body with Zod, hash password with `bcryptjs`, create `User` in DB, return `201`
 - [x] `src/middleware.ts` — Protect `/business/**` and `/marketplace/**` routes; redirect unauthenticated users to `/login`; redirect wrong-role users (e.g. a customer hitting `/business`) to their correct dashboard
 

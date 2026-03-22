@@ -1,28 +1,25 @@
 import { compare } from "bcryptjs";
+import { cache } from "react";
+import NextAuth from "next-auth";
 import { type DefaultSession, type NextAuthConfig } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { z } from "zod";
 
-import { UserRole } from "../../../generated/prisma";
+import { UserRole } from "../../generated/prisma";
+import { env } from "~/env";
 import { db } from "~/server/db";
 
-const credentialsSchema = z.object({
-  username: z.string().min(1),
-  password: z.string().min(1),
-});
-
 /**
- * Module augmentation for `next-auth` types. Allows us to add custom properties to the session
- * object and keep type safety.
- *
- * @see https://next-auth.js.org/getting-started/typescript#module-augmentation
+ * NextAuth configuration used by the App Router API route and server helpers.
+ * Credentials sign-in uses username + password verified with bcrypt against `User.passwordHash`.
+ * JWT and session carry `id`, `role`, and `username` for authorization (business vs customer).
  */
 declare module "next-auth" {
-  interface Session extends DefaultSession {
+  interface Session {
     user: {
       id: string;
-      username: string;
       role: UserRole;
+      username: string;
     } & DefaultSession["user"];
   }
 
@@ -40,12 +37,13 @@ declare module "next-auth/jwt" {
   }
 }
 
-/**
- * Options for NextAuth.js used to configure adapters, providers, callbacks, etc.
- *
- * @see https://next-auth.js.org/configuration/options
- */
-export const authConfig = {
+const credentialsSchema = z.object({
+  username: z.string().min(1),
+  password: z.string().min(1),
+});
+
+export const authOptions = {
+  secret: env.AUTH_SECRET,
   trustHost: true,
   session: {
     strategy: "jwt",
@@ -61,6 +59,7 @@ export const authConfig = {
         if (!parsed.success) return null;
 
         const { username, password } = parsed.data;
+
         const user = await db.user.findUnique({
           where: { username },
         });
@@ -72,6 +71,7 @@ export const authConfig = {
         return {
           id: user.id,
           name: user.name ?? user.username,
+          email: user.email ?? undefined,
           username: user.username,
           role: user.role,
         };
@@ -81,14 +81,13 @@ export const authConfig = {
   callbacks: {
     jwt: ({ token, user }) => {
       if (user) {
-        const t = token as typeof token & {
-          id?: string;
-          username?: string;
-          role?: UserRole;
+        const u = user as typeof user & {
+          username: string;
+          role: UserRole;
         };
-        t.id = user.id;
-        t.username = user.username;
-        t.role = user.role;
+        token.id = u.id;
+        token.username = u.username;
+        token.role = u.role;
       }
       return token;
     },
@@ -98,15 +97,29 @@ export const authConfig = {
         username?: string;
         role?: UserRole;
       };
+      const id = typeof t.id === "string" ? t.id : (t.sub ?? "");
+      const username =
+        typeof t.username === "string" ? t.username : "";
+      const role =
+        t.role === UserRole.BUSINESS || t.role === UserRole.CUSTOMER
+          ? t.role
+          : UserRole.CUSTOMER;
+
       return {
         ...session,
         user: {
           ...session.user,
-          id: t.id ?? t.sub!,
-          username: t.username ?? "",
-          role: t.role ?? UserRole.CUSTOMER,
+          id,
+          username,
+          role,
         },
       };
     },
   },
 } satisfies NextAuthConfig;
+
+const { auth: uncachedAuth, handlers, signIn, signOut } =
+  NextAuth(authOptions);
+
+export const auth = cache(uncachedAuth);
+export { handlers, signIn, signOut };
