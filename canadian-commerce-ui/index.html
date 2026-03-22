@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="en-CA">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NorthTrade — Canadian Commerce Platform</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="#" class="brand" aria-label="NorthTrade home">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span class="brand-text">
+          <span class="brand-name">NorthTrade</span>
+          <span class="brand-tag">Buy Canadian · Grow Canadian</span>
+        </span>
+      </a>
+
+      <nav class="header-nav" aria-label="Primary">
+        <div class="view-switch" role="tablist" aria-label="Account type">
+          <button type="button" id="tab-business" class="view-tab is-active" role="tab" aria-selected="true" aria-controls="panel-business" data-view="business">Business</button>
+          <button type="button" id="tab-consumer" class="view-tab" role="tab" aria-selected="false" aria-controls="panel-consumer" data-view="consumer">Marketplace</button>
+        </div>
+      </nav>
+
+      <div class="header-actions">
+        <button type="button" class="btn btn-ghost">Sign in</button>
+        <button type="button" class="btn btn-primary">Create account</button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+    <!-- BUSINESS VIEW -->
+    <section id="panel-business" class="view-panel is-visible" role="tabpanel" aria-labelledby="tab-business" data-panel="business">
+      <div class="page-intro business-intro">
+        <div>
+          <h1>Business dashboard</h1>
+          <p class="lede">Economic signals, tariff updates, and inventory intelligence tailored to your industry and supply chain.</p>
+        </div>
+        <div class="intro-meta">
+          <span class="pill pill-live">Live Canada feed</span>
+          <span class="pill">CAD · EST</span>
+        </div>
+      </div>
+
+      <div class="business-layout">
+        <aside class="business-rail" aria-label="Business navigation">
+          <nav class="rail-nav">
+            <a href="#biz-overview" class="rail-link is-current">Overview</a>
+            <a href="#biz-news" class="rail-link">News &amp; tariffs</a>
+            <a href="#biz-analytics" class="rail-link">Customer analytics</a>
+            <a href="#biz-products" class="rail-link">List products</a>
+            <a href="#biz-profile" class="rail-link">Company profile</a>
+            <a href="#biz-monitor" class="rail-link">Economic monitor</a>
+            <a href="#biz-inventory" class="rail-link">Inventory &amp; restock</a>
+          </nav>
+          <div class="rail-card">
+            <p class="rail-card-title">Example: Auto manufacturer</p>
+            <p class="rail-card-text">When steel tariffs or EV policy shifts, you get the headline, impact score, and suggested responses.</p>
+          </div>
+        </aside>
+
+        <div class="business-content">
+          <section id="biz-overview" class="card-stack">
+            <div class="grid KPIs">
+              <article class="kpi">
+                <span class="kpi-label">Exposure index</span>
+                <span class="kpi-value">Medium</span>
+                <span class="kpi-delta neutral">vs. last quarter</span>
+              </article>
+              <article class="kpi">
+                <span class="kpi-label">Tariff risk (import)</span>
+                <span class="kpi-value">↑ 3.2%</span>
+                <span class="kpi-delta down">Watch steel inputs</span>
+              </article>
+              <article class="kpi">
+                <span class="kpi-label">Domestic demand</span>
+                <span class="kpi-value">Strong</span>
+                <span class="kpi-delta up">+8% YoY</span>
+              </article>
+            </div>
+          </section>
+
+          <section id="biz-news" class="section-block">
+            <div class="section-head">
+              <h2>Top economic &amp; tariff news</h2>
+              <button type="button" class="btn btn-sm btn-outline">Customize sectors</button>
+            </div>
+            <div class="news-grid">
+              <article class="news-card priority">
+                <span class="news-badge">Tariffs</span>
+                <h3>Cross-border rules update on industrial components</h3>
+                <p>May affect landed cost for suppliers in your tier-2 list. Review contracts with three flagged vendors.</p>
+                <footer class="news-foot">
+                  <span class="time">2h ago · Federal</span>
+                  <button type="button" class="link-btn">Open briefing</button>
+                </footer>
+              </article>
+              <article class="news-card">
+                <span class="news-badge">Macro</span>
+                <h3>Bank of Canada signals hold on rates</h3>
+                <p>Stable borrowing costs support capex planning for Q3 tooling upgrades.</p>
+                <footer class="news-foot">
+                  <span class="time">5h ago</span>
+                  <button type="button" class="link-btn">Why it matters</button>
+                </footer>
+              </article>
+              <article class="news-card alert-card">
+                <span class="news-badge alert">Action</span>
+                <h3>Structured for your business: supply shock playbook</h3>
+                <p>Based on your industry (automotive) and supplier map, here are three responses: diversify region, hedge FX, shorten lead times.</p>
+                <footer class="news-foot">
+                  <span class="time">Personalized</span>
+                  <button type="button" class="link-btn">Apply to plan</button>
+                </footer>
+              </article>
+            </div>
+          </section>
+
+          <section id="biz-analytics" class="section-block">
+            <div class="section-head">
+              <h2>Customer analytics &amp; improvements</h2>
+              <p class="section-sub">Trends from your buyers, gaps to close, and where Canadian demand is growing.</p>
+            </div>
+            <div class="analytics-split">
+              <div class="chart-panel">
+                <div class="chart-header">
+                  <span>Order volume vs. forecast</span>
+                  <span class="chart-legend"><span class="dot ca"></span> Canada <span class="dot intl"></span> Export</span>
+                </div>
+                <div class="chart-bars" aria-hidden="true">
+                  <div class="bar" style="height: 45%"><span>J</span></div>
+                  <div class="bar" style="height: 62%"><span>F</span></div>
+                  <div class="bar" style="height: 58%"><span>M</span></div>
+                  <div class="bar" style="height: 71%"><span>A</span></div>
+                  <div class="bar" style="height: 80%"><span>M</span></div>
+                  <div class="bar" style="height: 66%"><span>J</span></div>
+                </div>
+                <ul class="insight-list">
+                  <li><strong>Improve:</strong> Post-purchase follow-up is 12% below peers — add a 48h check-in.</li>
+                  <li><strong>Trend:</strong> Repeat orders up in Atlantic provinces; consider regional shipping promo.</li>
+                </ul>
+              </div>
+              <div class="side-panels">
+                <div class="mini-card">
+                  <h3>Segment health</h3>
+                  <dl class="stat-dl">
+                    <div><dt>B2B fleet</dt><dd>92<span class="unit">/100</span></dd></div>
+                    <div><dt>Retail</dt><dd>78<span class="unit">/100</span></dd></div>
+                    <div><dt>Aftermarket</dt><dd>85<span class="unit">/100</span></dd></div>
+                  </dl>
+                </div>
+                <div class="mini-card highlight">
+                  <h3>Recommended next step</h3>
+                  <p>Bundle maintenance SKUs — similar businesses saw +6% basket size.</p>
+                  <button type="button" class="btn btn-sm btn-primary">View playbook</button>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section id="biz-products" class="section-block">
+            <div class="section-head">
+              <h2>List products — Buy Canadian</h2>
+              <button type="button" class="btn btn-sm btn-primary">Add product</button>
+            </div>
+            <div class="product-table-wrap">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Product</th>
+                    <th>Origin</th>
+                    <th>Visibility</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>All-season tire set — 17&quot;</td>
+                    <td><span class="tag-ca">Made in Canada</span></td>
+                    <td>Marketplace + B2B</td>
+                    <td><span class="status ok">Active</span></td>
+                  </tr>
+                  <tr>
+                    <td>Fleet brake service (mobile)</td>
+                    <td><span class="tag-ca">Service · ON</span></td>
+                    <td>B2B only</td>
+                    <td><span class="status ok">Active</span></td>
+                  </tr>
+                  <tr>
+                    <td>EV charging install — commercial</td>
+                    <td><span class="tag-ca">Certified partner</span></td>
+                    <td>Quote requests</td>
+                    <td><span class="status draft">Draft</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <section id="biz-profile" class="section-block">
+            <div class="section-head">
+              <h2>Company profile</h2>
+            </div>
+            <div class="profile-grid">
+              <div class="field-group">
+                <label>Industry</label>
+                <p class="field-value">Automotive manufacturing &amp; parts</p>
+              </div>
+              <div class="field-group">
+                <label>Primary suppliers (regions)</label>
+                <p class="field-value">ON, QC, US Midwest, EU (select)</p>
+              </div>
+              <div class="field-group">
+                <label>Business structure</label>
+                <p class="field-value">Corporation · Multi-site · Import + domestic assembly</p>
+              </div>
+              <div class="field-group">
+                <label>Economic monitor focus</label>
+                <p class="field-value">Steel/aluminum, EV incentives, freight, CAD/USD</p>
+              </div>
+              <button type="button" class="btn btn-outline">Edit profile</button>
+            </div>
+          </section>
+
+          <section id="biz-monitor" class="section-block">
+            <div class="section-head">
+              <h2>Economic monitor</h2>
+              <p class="section-sub">Alerts tuned to your structure — commodities, policy, and logistics.</p>
+            </div>
+            <div class="monitor-timeline">
+              <div class="timeline-item">
+                <span class="t-dot"></span>
+                <div>
+                  <strong>Freight index</strong> — West coast up 4%; consider eastern port option for next PO.
+                  <span class="t-meta">Today</span>
+                </div>
+              </div>
+              <div class="timeline-item">
+                <span class="t-dot"></span>
+                <div>
+                  <strong>Policy</strong> — Clean tech credit consultation open; may align with your EV line.
+                  <span class="t-meta">This week</span>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section id="biz-inventory" class="section-block">
+            <div class="section-head">
+              <h2>Inventory &amp; restock intelligence</h2>
+            </div>
+            <div class="inventory-grid">
+              <article class="inv-card">
+                <h3>SKU: Brake pads (fleet)</h3>
+                <p class="inv-level">Stock: 18 days at current velocity</p>
+                <p class="inv-tip"><strong>Tip:</strong> Port congestion news suggests +5 day lead time — order by Mar 28 to stay safe.</p>
+                <button type="button" class="btn btn-sm btn-outline">Create PO draft</button>
+              </article>
+              <article class="inv-card">
+                <h3>SKU: Alloy rim 18&quot;</h3>
+                <p class="inv-level">Stock: 34 days</p>
+                <p class="inv-tip"><strong>Tip:</strong> Commodity spot stable; bulk buy window in next 2 weeks if cash flow allows.</p>
+                <button type="button" class="btn btn-sm btn-outline">Simulate order</button>
+              </article>
+            </div>
+          </section>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONSUMER / MARKETPLACE VIEW -->
+    <section id="panel-consumer" class="view-panel" role="tabpanel" aria-labelledby="tab-consumer" hidden data-panel="consumer">
+      <div class="market-hero">
+        <div class="market-hero-inner">
+          <h1>Shop Canadian</h1>
+          <p class="lede">Discover and promote Canadian-made products — orders, subscriptions, and trusted reviews.</p>
+          <div class="search-bar">
+            <label for="search-q" class="visually-hidden">Search products</label>
+            <input id="search-q" type="search" placeholder="Search Canadian products, brands, categories…" autocomplete="off" />
+            <button type="button" class="btn btn-primary">Search</button>
+          </div>
+          <div class="hero-chips">
+            <span class="chip">Free shipping over $75</span>
+            <span class="chip">Recurring orders</span>
+            <span class="chip">Verified Canadian sellers</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="market-body">
+        <aside class="filters" aria-label="Filter marketplace">
+          <h2 class="filters-title">Categories</h2>
+          <ul class="filter-list">
+            <li><button type="button" class="filter-btn is-active" data-category="all" aria-pressed="true">All</button></li>
+            <li><button type="button" class="filter-btn" data-category="home-living" aria-pressed="false">Home &amp; living</button></li>
+            <li><button type="button" class="filter-btn" data-category="food-pantry" aria-pressed="false">Food &amp; pantry</button></li>
+            <li><button type="button" class="filter-btn" data-category="apparel" aria-pressed="false">Apparel</button></li>
+            <li><button type="button" class="filter-btn" data-category="electronics" aria-pressed="false">Electronics</button></li>
+            <li><button type="button" class="filter-btn" data-category="sports-outdoors" aria-pressed="false">Sports &amp; outdoors</button></li>
+          </ul>
+          <div class="filter-block">
+            <h3>Delivery</h3>
+            <label class="check"><input type="checkbox" checked /> Canada-wide</label>
+            <label class="check"><input type="checkbox" /> Local pickup</label>
+          </div>
+          <div class="filter-block">
+            <h3>Minimum rating</h3>
+            <label class="check"><input type="radio" name="rate" checked /> Any</label>
+            <label class="check"><input type="radio" name="rate" /> 4+ stars</label>
+            <label class="check"><input type="radio" name="rate" /> 4.5+ stars</label>
+          </div>
+        </aside>
+
+        <div class="market-main">
+          <div class="market-toolbar">
+            <p class="result-count" id="market-results" aria-live="polite"><strong id="product-count">15</strong> <span id="product-count-label">products shown</span><span id="product-count-scope" class="result-scope" hidden></span></p>
+            <div class="sort-row">
+              <label for="sort">Sort</label>
+              <select id="sort" class="select">
+                <option>Featured</option>
+                <option>Customer rating</option>
+                <option>Price: low to high</option>
+                <option>New arrivals</option>
+              </select>
+              <button type="button" class="btn btn-ghost btn-sm">Orders &amp; subscriptions</button>
+              <button type="button" class="btn btn-ghost btn-sm">Cart (2)</button>
+            </div>
+          </div>
+
+          <div class="product-grid" id="product-grid">
+            <article class="product-card" data-category="home-living">
+              <div class="product-img ph maple"></div>
+              <div class="product-body">
+                <button type="button" class="product-cat">Home &amp; living</button>
+                <span class="product-origin">Toronto, ON</span>
+                <h3 class="product-title">Heritage wool throw</h3>
+                <div class="rating" aria-label="4.8 out of 5 stars from 326 reviews">
+                  <span class="stars" aria-hidden="true">★★★★★</span>
+                  <span class="rating-num">4.8</span>
+                  <span class="rating-count">(326)</span>
+                </div>
+                <p class="product-price">$89.00 <span class="cad">CAD</span></p>
+                <div class="product-actions">
+                  <button type="button" class="btn btn-primary btn-block">Add to cart</button>
+                  <button type="button" class="btn btn-outline btn-block btn-sm">Subscribe &amp; save 10%</button>
+                </div>
+              </div>
+            </article>
+
+            <article class="product-card" data-category="home-living">
+              <div class="product-img ph linen"></div>
+              <div class="product-body">
+                <button type="button" class="product-cat">Home &amp; living</button>
+                <span class="product-origin">Montreal, QC</span>
+                <h3 class="product-title">Linen duvet cover — queen</h3>
+                <div class="rating" aria-label="4.7 out of 5 stars from 88 reviews">
+                  <span class="stars" aria-hidden="true">★★★★★</span>
+                  <span class="rating-num">4.7</span>
+                  <span class="rating-count">(88)</span>
+                </div>
+                <p class="product-price">$168.00 <span class="cad">CAD</span></p>
+                <div class="product-actions">
+                  <button type="button" class="btn btn-primary btn-block">Add to cart</button>
+                  <button type="button" class="btn btn-outline btn-block btn-sm">See swatches</button>
+                </div>
+              </div>
+            </article>
+
+            <article class="product-card" data-category="home-living">
+              <div class="product-img ph candle"></div>
+              <div class="product-body">
+                <button type="button" class="product-cat">Home &amp; living</button>
+                <span class="product-origin">Charlottetown, PE</span>
+                <h3 class="product-title">Beeswax candle trio</h3>
+                <div class="rating" aria-label="4.9 out of 5 stars from 412 reviews">
+                  <span class="stars" aria-hidden="true">★★★★★</span>
+                  <span class="rating-num">4.9</span>
+                  <span class="rating-count">(412)</span>
+                </div>
+                <p class="product-price">$36.00 <span class="cad">CAD</span></p>
+                <div class="product-actions">
+                  <button type="button" class="btn btn-primary btn-block">Add to cart</button>
+                  <button type="button" class="btn btn-outline btn-block btn-sm">Subscribe &amp; save 10%</button>
+                </div>
+              </div>
+            </article>
+
+            <article class="product-card" data-category="food-pantry">
+              <div class="product-img ph grain"></div>
+              <div class="product-body">
+                <button type="button" class="product-cat">Food &amp; pantry</button>
+                <span class="product-origin">Saskatoon, SK</span>
+                <h3 class="product-title">Prairie organic oats — 2kg</h3>
+                <div class="rating" aria-label="4.6 out of 5 stars from 1.1k reviews">
+                  <span class="stars" aria-hidden="true">★★★★★</span>
+                  <span class="rating-num">4.6</span>
+                  <span class="rating-count">(1.1k)</span>
+                </div>
+                <p class="product-price">$12.49 <span class="cad">CAD</span></p>
+                <div class="product-actions">
+                  <button type="button" class="btn btn-primary btn-block">Add to cart</button>
+                  <button type="button" class="btn btn-outline btn-block btn-sm">Every 4 weeks</button>
+                </div>
+              </div>
+            </article>
+
+            <article class="product-card" data-category="food-pantry">
+              <div class="product-img ph maple-bottle"></div>
+              <div class="product-body">
+                <button type="button" class="product-cat">Food &amp; pantry</button>
+                <span class="product-origin">Sherbrooke, QC</span>
+                <h3 class="product-title">Grade A maple syrup — 500ml</h3>
+                <div class="rating" aria-label="4.8 out of 5 stars from 2.4k reviews">
+                  <span class="stars" aria-hidden="true">★★★★★</span>
+                  <span class="rating-num">4.8</span>
+                  <span class="rating-count">(2.4k)</span>
+                </div>
+                <p class="product-price">$18.99 <span class="cad">CAD</span></p>
+                <div class="product-actions">
+                  <button type="button" class="btn btn-primary btn-block">Add to cart</button>
+                  <button type="button" class="btn btn-outline btn-block btn-sm">Every 8 weeks</button>
+                </div>
+              </div>
+            </article>
+
+            <article class="product-card" data-category="food-pantry">
+              <div class="product-img ph salmon"></div>
+              <div class="product-body">
+                <button type="button" class="product-cat">Food &amp; pantry</button>
+                <span class="product-origin">St. John&apos;s, NL</span>
+                <h3 class="product-title">Atlantic salmon jerky</h3>
+                <div class="rating" aria-label="4.5 out of 5 stars from 156 reviews">
+                  <span class="stars" aria-hidden="true">★★★★★</span>
+                  <span class="rating-num">4.5</span>
+                  <span class="rating-count">(156)</span>
+                </div>
+                <p class="product-price">$9.49 <span class="cad">CAD</span></p>
+                <div class="product-actions">
+                  <button type="button" class="btn btn-primary btn-block">Add to cart</button>
+                  <button type="button" class="btn btn-outline btn-block btn-sm">Build a snack box</button>
+                </div>
+              </div>
+            </article>
+
+            <article class="product-card" data-category="apparel">
+              <div class="product-img ph apparel"></div>
+              <div class="product-body">
+                <button type="button" class="product-cat">Apparel</button>
+                <span class="product-origin">Canmore, AB</span>
+                <h3 class="product-title">Merino base layer</h3>
+                <div class="rating" aria-label="4.7 out of 5 stars from 502 reviews">
+                  <span class="stars" aria-hidden="true">★★★★★</span>
+                  <span class="rating-num">4.7</span>
+                  <span class="rating-count">(502)</span>
+                </div>
+                <p class="product-price">$79.00 <span class="cad">CAD</span></p>
+                <div class="product-actions">
+                  <button type="button" class="btn btn-primary btn-block">Add to cart</button>
+                  <button type="button" class="btn btn-outline btn-block btn-sm">Size guide</button>
+                </div>
+              </div>
+            </article>
+
+            <article class="product-card" data-category="apparel">
+              <div class="product-img ph boots"></div>
+              <div class="product-body">
+                <button type="button" class="product-cat">Apparel</button>
+                <span class="product-origin">Winnipeg, MB</span>
+                <h3 class="product-title">Canvas winter boots</h3>
+                <div class="rating" aria-label="4.3 out of 5 stars from 67 reviews">
+                  <span class="stars" aria-hidden="true">★★★★☆</span>
+                  <span class="rating-num">4.3</span>
+                  <span class="rating-count">(67)</span>
+                </div>
+                <p class="product-price">$195.00 <span class="cad">CAD</span></p>
+                <div class="product-actions">
+                  <button type="button" class="btn btn-primary btn-block">Add to cart</button>
+                  <button type="button" class="btn btn-outline btn-block btn-sm">Wide widths</button>
+                </div>
+              </div>
+            </article>
+
+            <article class="product-card" data-category="apparel">
+              <div class="product-img ph toque"></div>
+              <div class="product-body">
+                <button type="button" class="product-cat">Apparel</button>
+                <span class="product-origin">Ottawa, ON</span>
+                <h3 class="product-title">Wool toque — maple leaf</h3>
+                <div class="rating" aria-label="4.8 out of 5 stars from 1.2k reviews">
+                  <span class="stars" aria-hidden="true">★★★★★</span>
+                  <span class="rating-num">4.8</span>
+                  <span class="rating-count">(1.2k)</span>
+                </div>
+                <p class="product-price">$34.00 <span class="cad">CAD</span></p>
+                <div class="product-actions">
+                  <button type="button" class="btn btn-primary btn-block">Add to cart</button>
+                  <button type="button" class="btn btn-outline btn-block btn-sm">Gift wrap</button>
+                </div>
+              </div>
+            </article>
+
+            <article class="product-card" data-category="electronics">
+              <div class="product-img ph tech"></div>
+              <div class="product-body">
+                <button type="button" class="product-cat">Electronics</button>
+                <span class="product-origin">Waterloo, ON</span>
+                <h3 class="product-title">Noise-cancelling headphones (Canadian brand)</h3>
+                <div class="rating" aria-label="4.4 out of 5 stars from 89 reviews">
+                  <span class="stars" aria-hidden="true">★★★★☆</span>
+                  <span class="rating-num">4.4</span>
+                  <span class="rating-count">(89)</span>
+                </div>
+                <p class="product-price">$249.99 <span class="cad">CAD</span></p>
+                <div class="product-actions">
+                  <button type="button" class="btn btn-primary btn-block">Add to cart</button>
+                  <button type="button" class="btn btn-outline btn-block btn-sm">Notify on sale</button>
+                </div>
+              </div>
+            </article>
+
+            <article class="product-card" data-category="electronics">
+              <div class="product-img ph hub"></div>
+              <div class="product-body">
+                <button type="button" class="product-cat">Electronics</button>
+                <span class="product-origin">Markham, ON</span>
+                <h3 class="product-title">USB-C hub — 7 port</h3>
+                <div class="rating" aria-label="4.6 out of 5 stars from 340 reviews">
+                  <span class="stars" aria-hidden="true">★★★★★</span>
+                  <span class="rating-num">4.6</span>
+                  <span class="rating-count">(340)</span>
+                </div>
+                <p class="product-price">$64.99 <span class="cad">CAD</span></p>
+                <div class="product-actions">
+                  <button type="button" class="btn btn-primary btn-block">Add to cart</button>
+                  <button type="button" class="btn btn-outline btn-block btn-sm">Compare specs</button>
+                </div>
+              </div>
+            </article>
+
+            <article class="product-card" data-category="electronics">
+              <div class="product-img ph battery"></div>
+              <div class="product-body">
+                <button type="button" class="product-cat">Electronics</button>
+                <span class="product-origin">Burnaby, BC</span>
+                <h3 class="product-title">Portable power bank 20k mAh</h3>
+                <div class="rating" aria-label="4.5 out of 5 stars from 91 reviews">
+                  <span class="stars" aria-hidden="true">★★★★★</span>
+                  <span class="rating-num">4.5</span>
+                  <span class="rating-count">(91)</span>
+                </div>
+                <p class="product-price">$52.00 <span class="cad">CAD</span></p>
+                <div class="product-actions">
+                  <button type="button" class="btn btn-primary btn-block">Add to cart</button>
+                  <button type="button" class="btn btn-outline btn-block btn-sm">Warranty info</button>
+                </div>
+              </div>
+            </article>
+
+            <article class="product-card" data-category="sports-outdoors">
+              <div class="product-img ph outdoor"></div>
+              <div class="product-body">
+                <button type="button" class="product-cat">Sports &amp; outdoors</button>
+                <span class="product-origin">Victoria, BC</span>
+                <h3 class="product-title">Carbon trekking poles (pair)</h3>
+                <div class="rating" aria-label="4.9 out of 5 stars from 204 reviews">
+                  <span class="stars" aria-hidden="true">★★★★★</span>
+                  <span class="rating-num">4.9</span>
+                  <span class="rating-count">(204)</span>
+                </div>
+                <p class="product-price">$134.00 <span class="cad">CAD</span></p>
+                <div class="product-actions">
+                  <button type="button" class="btn btn-primary btn-block">Add to cart</button>
+                  <button type="button" class="btn btn-outline btn-block btn-sm">Subscribe &amp; save 10%</button>
+                </div>
+              </div>
+            </article>
+
+            <article class="product-card" data-category="sports-outdoors">
+              <div class="product-img ph rain"></div>
+              <div class="product-body">
+                <button type="button" class="product-cat">Sports &amp; outdoors</button>
+                <span class="product-origin">North Vancouver, BC</span>
+                <h3 class="product-title">Packable rain shell</h3>
+                <div class="rating" aria-label="4.8 out of 5 stars from 445 reviews">
+                  <span class="stars" aria-hidden="true">★★★★★</span>
+                  <span class="rating-num">4.8</span>
+                  <span class="rating-count">(445)</span>
+                </div>
+                <p class="product-price">$189.00 <span class="cad">CAD</span></p>
+                <div class="product-actions">
+                  <button type="button" class="btn btn-primary btn-block">Add to cart</button>
+                  <button type="button" class="btn btn-outline btn-block btn-sm">Find in store</button>
+                </div>
+              </div>
+            </article>
+
+            <article class="product-card" data-category="sports-outdoors">
+              <div class="product-img ph hydration"></div>
+              <div class="product-body">
+                <button type="button" class="product-cat">Sports &amp; outdoors</button>
+                <span class="product-origin">Banff, AB</span>
+                <h3 class="product-title">Insulated hydration pack</h3>
+                <div class="rating" aria-label="4.6 out of 5 stars from 178 reviews">
+                  <span class="stars" aria-hidden="true">★★★★★</span>
+                  <span class="rating-num">4.6</span>
+                  <span class="rating-count">(178)</span>
+                </div>
+                <p class="product-price">$112.00 <span class="cad">CAD</span></p>
+                <div class="product-actions">
+                  <button type="button" class="btn btn-primary btn-block">Add to cart</button>
+                  <button type="button" class="btn btn-outline btn-block btn-sm">Trail-ready kit</button>
+                </div>
+              </div>
+            </article>
+          </div>
+
+          <section class="recurring-panel">
+            <h2>Recurring orders</h2>
+            <p class="section-sub">Manage deliveries on your schedule — same cart as one-time purchases.</p>
+            <div class="recurring-table-wrap">
+              <table class="data-table compact">
+                <thead>
+                  <tr>
+                    <th>Item</th>
+                    <th>Frequency</th>
+                    <th>Next ship</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Prairie organic oats — 2kg</td>
+                    <td>Every 4 weeks</td>
+                    <td>Apr 2</td>
+                    <td><button type="button" class="link-btn">Edit</button></td>
+                  </tr>
+                  <tr>
+                    <td>Household paper bundle</td>
+                    <td>Every 8 weeks</td>
+                    <td>May 14</td>
+                    <td><button type="button" class="link-btn">Edit</button></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="reviews-spotlight">
+            <h2>Reviews that drive trust</h2>
+            <p class="section-sub">Ratings aggregate recent verified purchases; sellers respond to feedback publicly.</p>
+            <div class="review-cards">
+              <blockquote class="review-card">
+                <div class="review-head">
+                  <span class="stars">★★★★★</span>
+                  <cite>— Alex M., Halifax</cite>
+                </div>
+                <p>“Shipped fast, clearly labeled Canadian-made. Subscription was easy to pause for vacation.”</p>
+                <footer><span class="tag-verified">Verified purchase</span></footer>
+              </blockquote>
+              <blockquote class="review-card">
+                <div class="review-head">
+                  <span class="stars">★★★★☆</span>
+                  <cite>— Jordan K., Calgary</cite>
+                </div>
+                <p>“Great quality. Would love more size options — seller replied within a day.”</p>
+                <footer><span class="tag-verified">Verified purchase</span></footer>
+              </blockquote>
+            </div>
+          </section>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <p><strong>NorthTrade</strong> — UI concept for a Canada-facing commerce and intelligence platform.</p>
+      <p class="footer-note">Colours: Canadian red, white, and black. Not affiliated with any government or retailer.</p>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
