@@ -125,10 +125,10 @@ Build components before the pages that render them.
 
 ## Phase 10 — Customer Marketplace Pages & Components (depends on: Phase 6 + Phase 7)
 
-- [ ] `src/components/customer/SearchBar.tsx` — Controlled text input that updates the `?search=` URL query param on change (debounced 300ms); no local state for query — reads from URL
-- [ ] `src/components/customer/ProductGrid.tsx` — Fetches products from `/api/products` using current URL query params; renders a responsive grid of `ProductCard` components; includes pagination controls
-- [ ] `src/components/customer/ReviewList.tsx` — Renders a list of reviews: author name, `StarRating` (display), date, body text
-- [ ] `src/components/customer/ReviewForm.tsx` — Interactive `StarRating` + text area; `POST`s to `/api/products/[id]/reviews`; clears and refreshes review list on success
+- [x] `src/components/customer/SearchBar.tsx` — Controlled text input that updates the `?search=` URL query param on change (debounced 300ms); no local state for query — reads from URL
+- [x] `src/components/customer/ProductGrid.tsx` — Fetches products from `/api/products` using current URL query params; renders a responsive grid of `ProductCard` components; includes pagination controls
+- [x] `src/components/customer/ReviewList.tsx` — Renders a list of reviews: author name, `StarRating` (display), date, body text
+- [x] `src/components/customer/ReviewForm.tsx` — Interactive `StarRating` + text area; `POST`s to `/api/products/[id]/reviews`; clears and refreshes review list on success
 - [ ] `src/app/marketplace/page.tsx` — Renders `SearchBar` above `ProductGrid`; URL-driven filtering (no client state)
 - [ ] `src/app/marketplace/[id]/page.tsx` — Product detail: hero image, name, price, business name, full description, `ReviewList`, `ReviewForm` (shown only if authenticated CUSTOMER)
 
