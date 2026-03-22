@@ -1,9 +1,49 @@
 import Link from "next/link";
 
-export default function HomePage() {
+import { signOutAction } from "~/app/actions/auth";
+import { auth } from "~/server/auth";
+
+export default async function HomePage() {
+  const session = await auth();
+
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c] text-white">
-      <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16">
+      <div className="container flex flex-col items-center justify-center gap-8 px-4 py-16">
+        <div className="flex flex-wrap items-center justify-center gap-4">
+          {session?.user ? (
+            <>
+              <p className="text-sm text-white/80">
+                Signed in as{" "}
+                <span className="font-semibold text-[hsl(280,100%,70%)]">
+                  {session.user.username}
+                </span>
+              </p>
+              <form action={signOutAction}>
+                <button
+                  type="submit"
+                  className="rounded-lg border border-white/30 px-4 py-2 text-sm transition hover:bg-white/10"
+                >
+                  Sign out
+                </button>
+              </form>
+            </>
+          ) : (
+            <>
+              <Link
+                href="/login"
+                className="rounded-lg border border-white/30 px-4 py-2 text-sm transition hover:bg-white/10"
+              >
+                Log in
+              </Link>
+              <Link
+                href="/register"
+                className="rounded-lg bg-[hsl(280,100%,70%)] px-4 py-2 text-sm font-semibold text-[#15162c] transition hover:brightness-110"
+              >
+                Register
+              </Link>
+            </>
+          )}
+        </div>
         <h1 className="text-5xl font-extrabold tracking-tight text-white sm:text-[5rem]">
           Create <span className="text-[hsl(280,100%,70%)]">T3</span> App
         </h1>
