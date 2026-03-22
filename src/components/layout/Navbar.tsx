@@ -4,19 +4,21 @@ import Link from "next/link";
 import { useSession } from "next-auth/react";
 
 import { signOutAction } from "~/app/actions/auth";
+import { UserRole } from "../../../generated/prisma";
 
 export function Navbar() {
   const { data: session, status } = useSession();
+  const user = session?.user;
 
   const roleLink =
-    session?.user.role === "BUSINESS" ? (
+    user?.role === UserRole.BUSINESS ? (
       <Link
         href="/business/dashboard"
         className="rounded-lg px-3 py-2 text-sm font-medium text-charcoal transition hover:bg-charcoal/5"
       >
-        Dashboard
+        Business dashboard
       </Link>
-    ) : session?.user.role === "CUSTOMER" ? (
+    ) : user?.role === UserRole.CUSTOMER ? (
       <Link
         href="/marketplace"
         className="rounded-lg px-3 py-2 text-sm font-medium text-charcoal transition hover:bg-charcoal/5"
@@ -30,9 +32,17 @@ export function Navbar() {
       <div className="mx-auto flex h-14 max-w-6xl items-center justify-between gap-4 px-4">
         <Link
           href="/"
-          className="shrink-0 text-base font-semibold tracking-tight text-charcoal"
+          className="flex min-w-0 shrink-0 items-center gap-2 text-base font-semibold tracking-tight text-charcoal"
         >
-          Maple <span className="text-maple">Tariff Disruptors</span>
+          <span aria-hidden className="text-xl">
+            🍁
+          </span>
+          <span className="min-w-0 truncate sm:whitespace-normal">
+            <span className="sm:hidden">Maple</span>
+            <span className="hidden sm:inline">
+              Maple <span className="text-maple">Tariff Disruptors</span>
+            </span>
+          </span>
         </Link>
 
         <nav
@@ -47,7 +57,7 @@ export function Navbar() {
           ) : (
             <>
               {roleLink}
-              {!session?.user ? (
+              {!user ? (
                 <>
                   <Link
                     href="/login?callbackUrl=%2Fmarketplace"
@@ -79,12 +89,12 @@ export function Navbar() {
                   <summary className="flex cursor-pointer list-none items-center gap-2 rounded-lg px-2 py-1.5 text-sm font-medium text-charcoal marker:hidden hover:bg-charcoal/5 [&::-webkit-details-marker]:hidden">
                     <span
                       className="max-w-[10rem] truncate sm:max-w-none"
-                      title={session.user.name ?? session.user.username}
+                      title={user.name ?? user.username}
                     >
-                      {session.user.name ?? session.user.username}
+                      {user.name ?? user.username}
                     </span>
-                    <span className="rounded bg-charcoal/10 px-1.5 py-0.5 text-xs text-charcoal/70">
-                      {session.user.role}
+                    <span className="rounded bg-charcoal/10 px-1.5 py-0.5 text-xs uppercase tracking-wide text-charcoal/70">
+                      {user.role.toLowerCase()}
                     </span>
                   </summary>
                   <div className="absolute right-0 mt-1 min-w-[12rem] rounded-lg border border-charcoal/10 bg-white py-1 shadow-lg">

@@ -130,12 +130,21 @@ export async function getProductById(
  * Lists all products for a business profile, newest first, for inventory / admin screens.
  */
 export async function getProductsForBusiness(
+ * Lists all products owned by a business profile, newest first.
+ */
+export async function getProductsByBusinessId(
   businessId: string,
 ): Promise<Product[]> {
   return db.product.findMany({
     where: { businessId },
     orderBy: { createdAt: "desc" },
   });
+}
+
+export async function countProductsByBusinessId(
+  businessId: string,
+): Promise<number> {
+  return db.product.count({ where: { businessId } });
 }
 
 export type CreateProductData = {

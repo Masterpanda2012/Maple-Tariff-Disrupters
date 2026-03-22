@@ -1,7 +1,13 @@
 "use server";
 
 import type { Prisma } from "../../../generated/prisma";
+import type { NewsReportWithSources } from "~/types";
 import { db } from "~/server/db";
+
+function parseSourceArticleIds(raw: Prisma.JsonValue): string[] {
+  if (!Array.isArray(raw)) return [];
+  return raw.filter((id): id is string => typeof id === "string");
+}
 
 /** Fields accepted by `upsertBusinessProfile` (maps to `BusinessProfile` columns). */
 export type UpsertBusinessProfileData = {
@@ -78,4 +84,25 @@ export async function getBusinessReports(
   ]);
 
   return { items, total, page, pageSize };
+}
+
+/**
+ * Loads the newest saved report for a business, with `NewsArticle` rows for source ids.
+ */
+export async function getLatestBusinessReportWithSources(
+  businessId: string,
+): Promise<NewsReportWithSources | null> {
+  const report = await db.businessNewsReport.findFirst({
+    where: { businessId },
+    orderBy: { createdAt: "desc" },
+  });
+  if (!report) return null;
+  const ids = parseSourceArticleIds(report.sourceArticleIds);
+  if (ids.length === 0) {
+    return { ...report, sources: [] };
+  }
+  const sources = await db.newsArticle.findMany({
+    where: { id: { in: ids } },
+  });
+  return { ...report, sources };
 }
