@@ -5,15 +5,16 @@ export function Footer() {
 
   return (
     <footer className="border-t border-charcoal/10 bg-cream">
-      <div className="mx-auto flex max-w-6xl flex-col gap-6 px-4 py-10 sm:flex-row sm:items-start sm:justify-between">
-        <div className="max-w-md">
+      <div className="mx-auto flex max-w-6xl flex-col gap-6 px-4 py-10 sm:flex-row sm:items-start sm:justify-between sm:gap-8">
+        <div className="flex min-w-0 flex-col gap-1">
           <Link
             href="/"
-            className="text-lg font-semibold tracking-tight text-maple"
+            className="text-lg font-semibold tracking-tight text-charcoal"
           >
-            Maple Tariff Disruptors
+            Maple{" "}
+            <span className="text-maple">Tariff Disruptors</span>
           </Link>
-          <p className="mt-2 text-sm leading-relaxed text-charcoal/70">
+          <p className="max-w-md text-sm leading-relaxed text-charcoal/70">
             We make the boring tasks melt away with maple-grade magic — a
             Canadian platform for businesses and shoppers navigating economic
             change together.
