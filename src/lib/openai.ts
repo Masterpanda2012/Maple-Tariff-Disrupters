@@ -12,7 +12,11 @@ const llmReportSchema = z.object({
 
 let openaiSingleton: OpenAI | undefined;
 
-function getOpenAI(): OpenAI {
+/**
+ * Returns the shared OpenAI client (lazy singleton). Throws if `OPENAI_API_KEY` is missing.
+ * Prefer this over constructing `new OpenAI()` so connection settings stay consistent app-wide.
+ */
+export function getOpenAIClient(): OpenAI {
   const key = env.OPENAI_API_KEY;
   if (!key) {
     throw new Error(
@@ -66,7 +70,7 @@ export async function generateBusinessReport(
     };
   }
 
-  const openai = getOpenAI();
+  const openai = getOpenAIClient();
   const suppliersLabel = jsonToLabel(profile.suppliers);
 
   const articlesBlock = newsItems
