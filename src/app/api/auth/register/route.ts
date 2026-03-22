@@ -54,6 +54,10 @@ export async function POST(request: Request) {
         { status: 409 },
       );
     }
-    throw e;
+    console.error("Registration error:", e);
+    return NextResponse.json(
+      { error: "An unexpected error occurred. Please try again." },
+      { status: 500 },
+    );
   }
 }

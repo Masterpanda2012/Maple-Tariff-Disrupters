@@ -28,11 +28,12 @@ CREATE TABLE "Session" (
 -- CreateTable
 CREATE TABLE "User" (
     "id" TEXT NOT NULL PRIMARY KEY,
+    "username" TEXT NOT NULL,
+    "passwordHash" TEXT NOT NULL,
     "name" TEXT,
     "email" TEXT,
     "emailVerified" DATETIME,
     "image" TEXT,
-    "passwordHash" TEXT,
     "role" TEXT NOT NULL DEFAULT 'CUSTOMER',
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
@@ -110,6 +111,9 @@ CREATE UNIQUE INDEX "Account_provider_providerAccountId_key" ON "Account"("provi
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Session_sessionToken_key" ON "Session"("sessionToken");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "User_username_key" ON "User"("username");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
