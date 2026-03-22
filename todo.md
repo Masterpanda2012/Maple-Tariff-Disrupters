@@ -111,13 +111,13 @@ Build components before the pages that render them.
 
 - [ ] `src/components/business/OnboardingForm.tsx` — Multi-step wizard: Step 1 company name + industry, Step 2 suppliers, Step 3 mission/description; `POST`s to `/api/business/onboarding` on final submit
 - [ ] `src/app/business/onboarding/page.tsx` — Server-checks if `BusinessProfile` already complete (redirect to dashboard if so); renders `OnboardingForm`
-- [ ] `src/components/business/NewsReportPanel.tsx` — Displays the most recent `BusinessNewsReport` via `NewsReportCard`; "Generate New Report" button triggers `POST /api/business/news-report`; shows loading state while LLM runs
-- [ ] `src/components/business/ProductForm.tsx` — Controlled form for product fields (name, description, price, inventory, imageUrl, tags); used for both create and edit; `POST`/`PATCH` to products API
-- [ ] `src/components/business/ProductTable.tsx` — Table of the business's products with columns: name, price, inventory, created date; Edit and Delete action buttons per row
-- [ ] `src/app/business/dashboard/page.tsx` — Greeting with business name, summary stats (product count), `NewsReportPanel`, link to product management
-- [ ] `src/app/business/products/page.tsx` — Fetches business's products; renders `ProductTable` + "Add New Product" button linking to `/business/products/new`
-- [ ] `src/app/business/products/new/page.tsx` — Renders `ProductForm` in create mode; redirects to `/business/products` on success
-- [ ] `src/app/business/products/[id]/edit/page.tsx` — Fetches existing product; renders `ProductForm` pre-populated; redirects to `/business/products` on save
+- [x] `src/components/business/NewsReportPanel.tsx` — Displays the most recent `BusinessNewsReport` via `NewsReportCard`; "Generate New Report" button triggers `POST /api/business/news-report`; shows loading state while LLM runs
+- [x] `src/components/business/ProductForm.tsx` — Controlled form for product fields (name, description, price, inventory, imageUrl, tags); used for both create and edit; `POST`/`PATCH` to products API
+- [x] `src/components/business/ProductTable.tsx` — Table of the business's products with columns: name, price, inventory, created date; Edit and Delete action buttons per row
+- [x] `src/app/business/dashboard/page.tsx` — Greeting with business name, summary stats (product count), `NewsReportPanel`, link to product management
+- [x] `src/app/business/products/page.tsx` — Fetches business's products; renders `ProductTable` + "Add New Product" button linking to `/business/products/new`
+- [x] `src/app/business/products/new/page.tsx` — Renders `ProductForm` in create mode; redirects to `/business/products` on success
+- [x] `src/app/business/products/[id]/edit/page.tsx` — Fetches existing product; renders `ProductForm` pre-populated; redirects to `/business/products` on save
 
 ---
 

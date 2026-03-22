@@ -2,7 +2,35 @@
 
 import type { Prisma } from "../../../generated/prisma";
 import type { BusinessProfile, NewsArticle } from "../../../generated/prisma";
+import type { NewsReportWithSources } from "~/types";
 import { db } from "~/server/db";
+
+function parseSourceArticleIds(json: Prisma.JsonValue): string[] {
+  if (json === null || json === undefined) return [];
+  if (Array.isArray(json)) {
+    return json.filter((id): id is string => typeof id === "string");
+  }
+  return [];
+}
+
+/**
+ * Returns the most recent saved report for a business with resolved source articles.
+ */
+export async function getLatestBusinessReportWithSources(
+  businessId: string,
+): Promise<NewsReportWithSources | null> {
+  const report = await db.businessNewsReport.findFirst({
+    where: { businessId },
+    orderBy: { createdAt: "desc" },
+  });
+  if (!report) return null;
+  const ids = parseSourceArticleIds(report.sourceArticleIds);
+  const sources =
+    ids.length > 0
+      ? await db.newsArticle.findMany({ where: { id: { in: ids } } })
+      : [];
+  return { ...report, sources };
+}
 
 /** Payload for persisting a generated report; maps to `BusinessNewsReport` fields. */
 export type SaveBusinessReportInput = {

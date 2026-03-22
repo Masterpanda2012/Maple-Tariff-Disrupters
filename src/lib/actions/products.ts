@@ -100,6 +100,18 @@ export async function getProductById(
   });
 }
 
+/**
+ * Lists all products for a business profile, newest first, for inventory / admin screens.
+ */
+export async function getProductsForBusiness(
+  businessId: string,
+): Promise<Product[]> {
+  return db.product.findMany({
+    where: { businessId },
+    orderBy: { createdAt: "desc" },
+  });
+}
+
 export type CreateProductData = {
   businessId: string;
   name: string;
