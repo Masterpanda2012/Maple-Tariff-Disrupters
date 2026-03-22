@@ -12,7 +12,7 @@ const registerSchema = z.object({
     .max(32)
     .regex(/^[a-zA-Z0-9_]+$/),
   password: z.string().min(8).max(128),
-  role: z.enum(["BUSINESS", "CUSTOMER"]).optional(),
+  role: z.nativeEnum(UserRole).optional(),
 });
 
 export async function POST(request: Request) {
@@ -40,9 +40,9 @@ export async function POST(request: Request) {
         username,
         passwordHash,
         name: username,
-        role: role === "BUSINESS" ? UserRole.BUSINESS : UserRole.CUSTOMER,
+        role: role ?? UserRole.CUSTOMER,
       },
-      select: { id: true, username: true },
+      select: { id: true, username: true, role: true },
     });
     return NextResponse.json({ user }, { status: 201 });
   } catch (e: unknown) {
