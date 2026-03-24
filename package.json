@@ -5,7 +5,7 @@
   "description": "Canadian platform for businesses to navigate tariff-related economic swings and for customers to find and buy Canadian products.",
   "type": "module",
   "scripts": {
-    "build": "prisma migrate deploy && next build",
+    "build": "node ./scripts/build.mjs",
     "check": "next lint && tsc --noEmit",
     "db:generate": "prisma migrate dev",
     "db:migrate": "prisma migrate deploy",
