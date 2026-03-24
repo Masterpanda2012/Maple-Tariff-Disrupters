@@ -112,7 +112,7 @@ export function OnboardingForm() {
   return (
     <form
       onSubmit={step === 3 ? onSubmit : (e) => e.preventDefault()}
-      className="mx-auto flex w-full max-w-lg flex-col gap-6 rounded-xl border border-charcoal/10 bg-white p-6 shadow-sm"
+      className="mx-auto flex w-full max-w-lg animate-fade-in-up flex-col gap-6 rounded-2xl border border-charcoal/10 bg-white p-6 shadow-sm motion-reduce:animate-none"
     >
       <div className="flex items-center justify-between gap-4">
         <h1 className="text-xl font-semibold text-charcoal">
@@ -133,7 +133,7 @@ export function OnboardingForm() {
       </div>
 
       {step === 1 ? (
-        <div className="flex flex-col gap-4">
+        <div className="animate-fade-in-up flex flex-col gap-4 motion-reduce:animate-none">
           <label className="flex flex-col gap-1 text-sm">
             <span className="font-medium text-charcoal">Company name</span>
             <input
@@ -158,7 +158,7 @@ export function OnboardingForm() {
       ) : null}
 
       {step === 2 ? (
-        <div className="flex flex-col gap-3">
+        <div className="animate-fade-in-up flex flex-col gap-3 motion-reduce:animate-none">
           <p className="text-sm text-charcoal/75">
             List key suppliers or partners your business relies on. These help
             us match relevant economic news to your operations.
@@ -191,7 +191,7 @@ export function OnboardingForm() {
       ) : null}
 
       {step === 3 ? (
-        <div className="flex flex-col gap-4">
+        <div className="animate-fade-in-up flex flex-col gap-4 motion-reduce:animate-none">
           <label className="flex flex-col gap-1 text-sm">
             <span className="font-medium text-charcoal">Mission</span>
             <textarea

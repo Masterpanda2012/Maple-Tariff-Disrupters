@@ -142,7 +142,7 @@ export function EditBusinessProfileForm({
   return (
     <form
       onSubmit={onSubmit}
-      className="mx-auto flex w-full max-w-2xl flex-col gap-8 rounded-2xl border border-charcoal/10 bg-white p-6 shadow-sm sm:p-8"
+      className="mx-auto flex w-full max-w-2xl animate-fade-in-up flex-col gap-8 rounded-2xl border border-charcoal/10 bg-white p-6 shadow-sm motion-reduce:animate-none sm:p-8"
     >
       <div>
         <h1 className="text-2xl font-semibold text-charcoal">
@@ -154,7 +154,7 @@ export function EditBusinessProfileForm({
         </p>
       </div>
 
-      <section className="flex flex-col gap-4">
+      <section className="animate-fade-in-up flex flex-col gap-4 delay-75 motion-reduce:animate-none">
         <h2 className="text-sm font-semibold uppercase tracking-wide text-charcoal/50">
           Company basics
         </h2>
@@ -179,7 +179,7 @@ export function EditBusinessProfileForm({
         </label>
       </section>
 
-      <section className="flex flex-col gap-3">
+      <section className="animate-fade-in-up flex flex-col gap-3 delay-100 motion-reduce:animate-none">
         <h2 className="text-sm font-semibold uppercase tracking-wide text-charcoal/50">
           Suppliers &amp; partners
         </h2>
@@ -213,7 +213,7 @@ export function EditBusinessProfileForm({
         </button>
       </section>
 
-      <section className="flex flex-col gap-4">
+      <section className="animate-fade-in-up flex flex-col gap-4 delay-150 motion-reduce:animate-none">
         <h2 className="text-sm font-semibold uppercase tracking-wide text-charcoal/50">
           Story
         </h2>
@@ -239,7 +239,7 @@ export function EditBusinessProfileForm({
         </label>
       </section>
 
-      <section className="flex flex-col gap-4">
+      <section className="animate-fade-in-up flex flex-col gap-4 delay-200 motion-reduce:animate-none">
         <h2 className="text-sm font-semibold uppercase tracking-wide text-charcoal/50">
           Economic exposure (optional)
         </h2>
