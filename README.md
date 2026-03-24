@@ -25,4 +25,4 @@ Run tests with `npm test`; lint with `npm run lint`.
    - Optional: `OPENAI_API_KEY`, `DIFFY_API_URL`, `DIFFY_API_KEY` for AI reports and news ingestion
 3. Redeploy. The build runs `prisma migrate deploy` then `next build`, so the database schema is applied automatically when `DATABASE_URL` is set.
 
-Scheduled jobs are defined in `vercel.json` (news hourly, FX at :15 past the hour). They require `CRON_SECRET` to be set.
+Scheduled work is one **daily** cron in `vercel.json` (`/api/cron/daily` at 06:00 UTC) so it stays within Vercel **Hobby** limits. That route refreshes FX rates and runs Diffy news ingest when Diffy env vars are set. For more frequent runs (e.g. hourly), upgrade to **Pro** and either change the schedule or call `/api/cron/fetch-news` and `/api/cron/fetch-fx` from additional cron entries. `CRON_SECRET` must be set.

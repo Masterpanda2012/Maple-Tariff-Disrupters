@@ -1,6 +1,6 @@
 /**
  * Next.js server bootstrap (Node runtime only): optional one-shot syncs after deploy.
- * Scheduled news/FX ingestion uses Vercel Cron → `/api/cron/fetch-news` and `/api/cron/fetch-fx`
+ * Scheduled news/FX ingestion uses Vercel Cron → `/api/cron/daily` (Hobby: once per day)
  * (serverless has no long-lived `node-cron` process).
  */
 export async function register() {
