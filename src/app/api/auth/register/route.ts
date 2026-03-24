@@ -5,6 +5,8 @@ import { z } from "zod";
 import { UserRole } from "../../../../../generated/prisma";
 import { db } from "~/server/db";
 
+export const runtime = "nodejs";
+
 const registerSchema = z.object({
   email: z.string().email().max(254),
   password: z.string().min(8).max(128),
