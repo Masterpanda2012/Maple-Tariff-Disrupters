@@ -15,6 +15,13 @@ import "./src/env.js";
  * in the browser after build.
  */
 const nextConfig: NextConfig = {
+  webpack: (config) => {
+    config.resolve ??= {};
+    config.resolve.alias ??= {};
+    // `pg-native` is optional in `pg`; Vercel/Next may warn when it's absent.
+    config.resolve.alias["pg-native"] = false;
+    return config;
+  },
   images: {
     remotePatterns: [
       {
