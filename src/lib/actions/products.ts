@@ -25,6 +25,7 @@ export type GetProductsResult = {
  * **Happy path:** Returns a page of products (newest first) with owning `BusinessProfile`, plus total count for UI pagination.
  *
  * **Edge cases:** Empty or whitespace-only `search` / `tag` are ignored. `page` less than 1 is treated as page 1.
+ * If `page` is past the last page, results are returned for the last page and `page` in the result is clamped accordingly.
  * Tag matching uses SQLite `json_each` on the JSON `tags` array (string values).
  *
  * **Bad path:** If a `tag` is given but no products contain that tag, returns an empty list with `total: 0` (no error).
@@ -34,7 +35,6 @@ export async function getProducts(
 ): Promise<GetProductsResult> {
   const pageSize = PRODUCTS_PAGE_SIZE;
   const page = Math.max(1, filters.page ?? 1);
-  const skip = (page - 1) * pageSize;
 
   const search = filters.search?.trim();
   const tag = filters.tag?.trim();
@@ -59,7 +59,7 @@ export async function getProducts(
     `;
     const ids = rows.map((r) => r.id);
     if (ids.length === 0) {
-      return { products: [], total: 0, page, pageSize };
+      return { products: [], total: 0, page: 1, pageSize };
     }
     tagIdFilter = { id: { in: ids } };
   }
@@ -70,16 +70,18 @@ export async function getProducts(
   const where: Prisma.ProductWhereInput =
     conditions.length > 0 ? { AND: conditions } : {};
 
-  const [products, total] = await Promise.all([
-    db.product.findMany({
-      where,
-      include: { business: true },
-      orderBy: { createdAt: "desc" },
-      skip,
-      take: pageSize,
-    }),
-    db.product.count({ where }),
-  ]);
+  const total = await db.product.count({ where });
+  const maxPage = Math.max(1, Math.ceil(total / pageSize));
+  const effectivePage = Math.min(page, maxPage);
+  const skip = (effectivePage - 1) * pageSize;
+
+  const products = await db.product.findMany({
+    where,
+    include: { business: true },
+    orderBy: { createdAt: "desc" },
+    skip,
+    take: pageSize,
+  });
 
   const productIds = products.map((p) => p.id);
   const averages =
@@ -103,7 +105,12 @@ export async function getProducts(
     averageRating: avgMap.get(p.id) ?? 0,
   }));
 
-  return { products: productsWithAvg, total, page, pageSize };
+  return {
+    products: productsWithAvg,
+    total,
+    page: effectivePage,
+    pageSize,
+  };
 }
 
 /**

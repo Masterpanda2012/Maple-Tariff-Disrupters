@@ -74,14 +74,16 @@ model VerificationToken {
 }
 
 model BusinessProfile {
-    id          String   @id @default(cuid())
-    userId      String   @unique
-    companyName String
-    industry    String
-    suppliers   Json
-    mission     String
-    description String
-    isVerified  Boolean  @default(false)
+    id               String   @id @default(cuid())
+    userId           String   @unique
+    companyName      String
+    industry         String
+    suppliers        Json
+    mission          String
+    description      String
+    isVerified       Boolean  @default(false)
+    /// PFD-aligned optional exposure: province, NAICS, revenue band, supplier countries, import %, markets, cost sensitivity, risk prefs, etc.
+    exposureProfile  Json?
 
     user        User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
     products    Product[]
@@ -138,9 +140,26 @@ model BusinessNewsReport {
     reportTitle      String
     reportBody       String
     sourceArticleIds Json
+    /// Structured sections per PFD: whatChanged, howItAffects, whatToDo[], severity, disclaimer
+    reportSections   Json?
+    /// Watch | Caution | Act Now
+    severity         String?
     createdAt        DateTime @default(now())
 
     business BusinessProfile @relation(fields: [businessId], references: [id], onDelete: Cascade)
 
     @@index([businessId])
+}
+
+/// Latest polled FX snapshot (Frankfurter / ECB-based CAD crosses). Used for economic intelligence context.
+model FxRateSnapshot {
+    id        String   @id @default(cuid())
+    base      String
+    quote     String
+    rate      Decimal
+    source    String
+    fetchedAt DateTime @default(now())
+
+    @@index([fetchedAt])
+    @@index([base, quote])
 }

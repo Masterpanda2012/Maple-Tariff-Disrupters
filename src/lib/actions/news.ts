@@ -9,6 +9,8 @@ export type SaveBusinessReportInput = {
   title: string;
   report: string;
   sourceArticleIds: string[];
+  reportSections?: Prisma.InputJsonValue;
+  severity?: string | null;
 };
 
 const RECENT_ARTICLE_CAP = 500;
@@ -32,6 +34,36 @@ function parseArticleTags(tags: Prisma.JsonValue): string[] {
  * Builds a normalized tag set from a business profile: industry (full string and words),
  * plus string entries from the `suppliers` JSON array when present.
  */
+function mergeExposureProfileTags(
+  profile: BusinessProfile,
+  out: Set<string>,
+  add: (raw: string) => void,
+) {
+  const raw = profile.exposureProfile;
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) return;
+  const o = raw as Record<string, unknown>;
+  if (typeof o.province === "string") add(o.province);
+  if (typeof o.naicsCode === "string") add(o.naicsCode);
+  if (typeof o.revenueBand === "string") add(o.revenueBand);
+  if (Array.isArray(o.primarySupplierCountries)) {
+    for (const x of o.primarySupplierCountries) {
+      if (typeof x === "string") add(x);
+    }
+  }
+  if (Array.isArray(o.costSensitivityRank)) {
+    for (const x of o.costSensitivityRank) {
+      if (typeof x === "string") add(x);
+    }
+  }
+  if (Array.isArray(o.customerMarkets)) {
+    for (const x of o.customerMarkets) {
+      if (typeof x === "string") add(x);
+    }
+  } else if (typeof o.customerMarkets === "string") {
+    add(o.customerMarkets);
+  }
+}
+
 function collectBusinessTags(profile: BusinessProfile): Set<string> {
   const out = new Set<string>();
   const add = (raw: string) => {
@@ -49,7 +81,27 @@ function collectBusinessTags(profile: BusinessProfile): Set<string> {
     }
   }
 
+  mergeExposureProfileTags(profile, out, add);
+
   return out;
+}
+
+/**
+ * When Diffy tags don't align with profile wording, fall back to matching normalized
+ * industry/supplier strings against article title + summary (substring, min length 3).
+ */
+function articleTextOverlapsProfile(
+  article: NewsArticle,
+  businessTags: Set<string>,
+): boolean {
+  if (businessTags.size === 0) return false;
+  const haystack = normalizeTag(`${article.title} ${article.summary}`);
+  if (haystack.length === 0) return false;
+  for (const tag of businessTags) {
+    if (tag.length < 3) continue;
+    if (haystack.includes(tag)) return true;
+  }
+  return false;
 }
 
 function articleMatchesProfile(
@@ -61,12 +113,13 @@ function articleMatchesProfile(
   for (const at of articleTags) {
     if (businessTags.has(at)) return true;
   }
-  return false;
+  return articleTextOverlapsProfile(article, businessTags);
 }
 
 /**
  * Returns recent news articles whose tag list overlaps the business profile (industry and
- * supplier strings), compared case-insensitively. Scans the latest rows by `publishedAt` up to
+ * supplier strings), compared case-insensitively, or whose title/summary contains those terms.
+ * Scans the latest rows by `publishedAt` up to
  * a fixed cap, then filters in memory (SQLite JSON tag queries are not expressed in Prisma).
  *
  * **Happy path:** Profile with tags that appear on ingested articles — returns matching articles
@@ -101,6 +154,10 @@ export async function saveBusinessReport(
       reportTitle: report.title,
       reportBody: report.report,
       sourceArticleIds: report.sourceArticleIds as Prisma.InputJsonValue,
+      ...(report.reportSections !== undefined && {
+        reportSections: report.reportSections as Prisma.InputJsonValue,
+      }),
+      ...(report.severity !== undefined && { severity: report.severity }),
     },
   });
 }

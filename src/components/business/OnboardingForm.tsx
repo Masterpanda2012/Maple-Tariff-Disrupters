@@ -1,31 +1,46 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 type Step = 1 | 2 | 3;
 
+type SupplierRow = { id: string; value: string };
+
 export function OnboardingForm() {
   const router = useRouter();
+  const supplierIdSeq = useRef(0);
   const [step, setStep] = useState<Step>(1);
   const [companyName, setCompanyName] = useState("");
   const [industry, setIndustry] = useState("");
-  const [suppliers, setSuppliers] = useState<string[]>([""]);
+  const [suppliers, setSuppliers] = useState<SupplierRow[]>([
+    { id: "sup-0", value: "" },
+  ]);
   const [mission, setMission] = useState("");
   const [description, setDescription] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
 
   function addSupplierRow() {
-    setSuppliers((s) => [...s, ""]);
+    supplierIdSeq.current += 1;
+    const id = `sup-${supplierIdSeq.current}`;
+    setSuppliers((s) => [...s, { id, value: "" }]);
   }
 
-  function updateSupplier(i: number, value: string) {
-    setSuppliers((s) => s.map((x, j) => (j === i ? value : x)));
+  function updateSupplier(id: string, value: string) {
+    setSuppliers((s) =>
+      s.map((row) => (row.id === id ? { ...row, value } : row)),
+    );
   }
 
-  function removeSupplier(i: number) {
-    setSuppliers((s) => (s.length <= 1 ? [""] : s.filter((_, j) => j !== i)));
+  function removeSupplier(id: string) {
+    setSuppliers((s) => {
+      if (s.length <= 1) {
+        supplierIdSeq.current = 0;
+        return [{ id: "sup-0", value: "" }];
+      }
+      return s.filter((row) => row.id !== id);
+    });
   }
 
   function validateStep(current: Step): boolean {
@@ -36,7 +51,7 @@ export function OnboardingForm() {
       }
     }
     if (current === 2) {
-      const cleaned = suppliers.map((s) => s.trim()).filter(Boolean);
+      const cleaned = suppliers.map((s) => s.value.trim()).filter(Boolean);
       if (cleaned.length === 0) {
         setError("Add at least one supplier or partner.");
         return false;
@@ -67,7 +82,7 @@ export function OnboardingForm() {
     if (!validateStep(3)) return;
     setPending(true);
     setError(null);
-    const supplierList = suppliers.map((s) => s.trim()).filter(Boolean);
+    const supplierList = suppliers.map((s) => s.value.trim()).filter(Boolean);
     try {
       const res = await fetch("/api/business/onboarding", {
         method: "POST",
@@ -148,17 +163,17 @@ export function OnboardingForm() {
             List key suppliers or partners your business relies on. These help
             us match relevant economic news to your operations.
           </p>
-          {suppliers.map((s, i) => (
-            <div key={i} className="flex gap-2">
+          {suppliers.map((row, i) => (
+            <div key={row.id} className="flex gap-2">
               <input
                 className="flex-1 rounded-lg border border-charcoal/15 px-3 py-2 text-sm text-charcoal focus:border-maple focus:outline-none focus:ring-1 focus:ring-maple"
-                value={s}
-                onChange={(e) => updateSupplier(i, e.target.value)}
+                value={row.value}
+                onChange={(e) => updateSupplier(row.id, e.target.value)}
                 placeholder={`Supplier ${i + 1}`}
               />
               <button
                 type="button"
-                onClick={() => removeSupplier(i)}
+                onClick={() => removeSupplier(row.id)}
                 className="rounded-lg px-2 text-sm text-charcoal/60 hover:bg-charcoal/5 hover:text-charcoal"
               >
                 Remove

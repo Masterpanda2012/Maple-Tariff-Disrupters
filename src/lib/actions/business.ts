@@ -16,6 +16,8 @@ export type UpsertBusinessProfileData = {
   suppliers: Prisma.JsonValue;
   mission: string;
   description: string;
+  /** PFD-aligned optional exposure (province, NAICS, markets, import %, etc.). */
+  exposureProfile?: Prisma.JsonValue | null;
 };
 
 /**
@@ -46,6 +48,10 @@ export async function upsertBusinessProfile(
       suppliers: data.suppliers as Prisma.InputJsonValue,
       mission: data.mission,
       description: data.description,
+      ...(data.exposureProfile !== undefined &&
+        data.exposureProfile !== null && {
+          exposureProfile: data.exposureProfile as Prisma.InputJsonValue,
+        }),
     },
     update: {
       companyName: data.companyName,
@@ -53,6 +59,12 @@ export async function upsertBusinessProfile(
       suppliers: data.suppliers as Prisma.InputJsonValue,
       mission: data.mission,
       description: data.description,
+      ...(data.exposureProfile !== undefined && {
+        exposureProfile:
+          data.exposureProfile === null
+            ? null
+            : (data.exposureProfile as Prisma.InputJsonValue),
+      }),
     },
   });
 }

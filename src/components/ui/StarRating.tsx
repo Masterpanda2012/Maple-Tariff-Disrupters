@@ -42,6 +42,8 @@ export function StarRating({
   const clamped = Math.min(5, Math.max(0, value));
   const rounded = Math.round(clamped);
   const interactive = typeof onChange === "function";
+  /** Integer stars selected in interactive mode (avoids rounding drift on averages). */
+  const selected = interactive ? Math.round(clamped) : rounded;
   const defaultLabel = interactive ? "Your rating" : `Rating: ${rounded} out of 5`;
 
   const stars = [1, 2, 3, 4, 5] as const;
@@ -58,11 +60,11 @@ export function StarRating({
             key={n}
             type="button"
             role="radio"
-            aria-checked={rounded === n}
+            aria-checked={selected === n}
             className="rounded p-0.5 text-maple transition hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-maple"
             onClick={() => onChange(n)}
           >
-            <StarIcon filled={rounded >= n} />
+            <StarIcon filled={selected >= n} />
             <span className="sr-only">
               {n} star{n === 1 ? "" : "s"}
             </span>

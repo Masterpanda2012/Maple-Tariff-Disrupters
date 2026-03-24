@@ -58,6 +58,14 @@ describe("POST /api/business/news-report", () => {
       mission: "Build local",
       description: "Tier-2 supplier",
       isVerified: false,
+      exposureProfile: null,
+    };
+
+    const sections = {
+      whatChanged: "No new articles matched.",
+      howItAffects: "N/A",
+      whatToDo: ["a", "b"],
+      disclaimer: "This alert is an informational signal only and does not constitute financial or legal advice.",
     };
 
     hoisted.getBusinessProfile.mockResolvedValue(profile);
@@ -65,6 +73,8 @@ describe("POST /api/business/news-report", () => {
     hoisted.generateBusinessReport.mockResolvedValue({
       title: "Tariffs and your supply chain",
       report: "Short-term: review contracts. Long-term: diversify.",
+      severity: "Watch",
+      reportSections: sections,
     });
     hoisted.saveBusinessReport.mockResolvedValue({
       id: "report-1",
@@ -72,6 +82,8 @@ describe("POST /api/business/news-report", () => {
       reportTitle: "Tariffs and your supply chain",
       reportBody: "Short-term: review contracts. Long-term: diversify.",
       sourceArticleIds: [],
+      reportSections: sections,
+      severity: "Watch",
       createdAt: new Date("2025-06-01T12:00:00.000Z"),
     });
 
@@ -90,6 +102,7 @@ describe("POST /api/business/news-report", () => {
         title: "Tariffs and your supply chain",
         report: "Short-term: review contracts. Long-term: diversify.",
         sourceArticleIds: [],
+        severity: "Watch",
       }),
     );
   });

@@ -28,6 +28,11 @@ export function ProductGrid() {
   const [loading, setLoading] = useState(true);
   const [fetchError, setFetchError] = useState<string | null>(null);
 
+  const pageFromUrl = Math.max(
+    1,
+    Number.parseInt(searchParams.get("page") ?? "1", 10) || 1,
+  );
+
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
@@ -60,6 +65,16 @@ export function ProductGrid() {
     };
   }, [queryString]);
 
+  useEffect(() => {
+    if (!data || loading) return;
+    if (data.page === pageFromUrl) return;
+    const params = new URLSearchParams(searchParams.toString());
+    if (data.page <= 1) params.delete("page");
+    else params.set("page", String(data.page));
+    const qs = params.toString();
+    router.replace(qs ? `${pathname}?${qs}` : pathname);
+  }, [data, loading, pageFromUrl, pathname, router, searchParams]);
+
   function goToPage(nextPage: number) {
     const params = new URLSearchParams(searchParams.toString());
     if (nextPage <= 1) params.delete("page");
@@ -70,9 +85,13 @@ export function ProductGrid() {
 
   if (loading) {
     return (
-      <p className="text-sm text-charcoal/70" role="status">
-        Loading products…
-      </p>
+      <div className="flex flex-col items-center gap-3 py-12" role="status">
+        <span
+          className="inline-block size-10 animate-spin rounded-full border-2 border-maple/20 border-t-maple"
+          aria-hidden
+        />
+        <p className="text-sm text-charcoal/70">Loading products…</p>
+      </div>
     );
   }
 
@@ -85,9 +104,13 @@ export function ProductGrid() {
   }
 
   if (!data || data.products.length === 0) {
+    const message =
+      data?.total === 0
+        ? "No products match your filters yet."
+        : "No products on this page.";
     return (
       <p className="rounded-xl border border-dashed border-charcoal/20 bg-cream/40 px-4 py-10 text-center text-sm text-charcoal/70">
-        No products match your filters yet.
+        {message}
       </p>
     );
   }
@@ -98,8 +121,12 @@ export function ProductGrid() {
   return (
     <div className="flex flex-col gap-8">
       <ul className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {products.map((p) => (
-          <li key={p.id}>
+        {products.map((p, i) => (
+          <li
+            key={p.id}
+            className="animate-fade-in-up motion-reduce:animate-none"
+            style={{ animationDelay: `${Math.min(i, 8) * 55}ms` }}
+          >
             <ProductCard
               id={p.id}
               name={p.name}
@@ -121,18 +148,18 @@ export function ProductGrid() {
             type="button"
             disabled={page <= 1}
             onClick={() => goToPage(page - 1)}
-            className="rounded-lg border border-charcoal/20 px-4 py-2 text-sm font-medium text-charcoal transition hover:bg-cream disabled:cursor-not-allowed disabled:opacity-50"
+            className="rounded-xl border border-charcoal/20 bg-white px-4 py-2 text-sm font-medium text-charcoal shadow-sm transition duration-200 hover:-translate-y-0.5 hover:border-charcoal/30 hover:bg-cream disabled:translate-y-0 disabled:cursor-not-allowed disabled:opacity-50"
           >
             Previous
           </button>
-          <span className="text-sm text-charcoal/75">
+          <span className="text-sm tabular-nums text-charcoal/75">
             Page {page} of {totalPages}
           </span>
           <button
             type="button"
             disabled={page >= totalPages}
             onClick={() => goToPage(page + 1)}
-            className="rounded-lg border border-charcoal/20 px-4 py-2 text-sm font-medium text-charcoal transition hover:bg-cream disabled:cursor-not-allowed disabled:opacity-50"
+            className="rounded-xl border border-charcoal/20 bg-white px-4 py-2 text-sm font-medium text-charcoal shadow-sm transition duration-200 hover:-translate-y-0.5 hover:border-charcoal/30 hover:bg-cream disabled:translate-y-0 disabled:cursor-not-allowed disabled:opacity-50"
           >
             Next
           </button>

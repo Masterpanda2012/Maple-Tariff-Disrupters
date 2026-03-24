@@ -49,7 +49,7 @@ export function SearchBar() {
       <input
         type="search"
         name="search"
-        className="rounded-lg border border-charcoal/15 px-3 py-2 text-charcoal placeholder:text-charcoal/40 focus:border-maple focus:outline-none focus:ring-1 focus:ring-maple"
+        className="rounded-xl border border-charcoal/15 bg-white/80 px-3 py-2.5 text-charcoal shadow-sm transition duration-200 placeholder:text-charcoal/40 hover:border-charcoal/25 focus:border-maple focus:bg-white focus:outline-none focus:ring-2 focus:ring-maple/25"
         placeholder="Search by name or description…"
         value={value}
         autoComplete="off"

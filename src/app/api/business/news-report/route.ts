@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
+import type { Prisma } from "../../../../../generated/prisma";
 import { UserRole } from "../../../../../generated/prisma";
 import {
   getBusinessProfile,
@@ -79,12 +80,17 @@ export async function POST() {
       title: generated.title,
       report: generated.report,
       sourceArticleIds: newsItems.map((a) => a.id),
+      reportSections:
+        generated.reportSections as unknown as Prisma.InputJsonValue,
+      severity: generated.severity,
     });
     return NextResponse.json({ report }, { status: 201 });
   } catch (e: unknown) {
     console.error("news-report POST:", e);
-    const message =
-      e instanceof Error ? e.message : "Failed to generate business report";
+    const raw = e instanceof Error ? e.message : "Failed to generate business report";
+    const message = raw.includes("OPENAI_API_KEY")
+      ? "AI reporting is not configured (set OPENAI_API_KEY on the server)."
+      : raw;
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }

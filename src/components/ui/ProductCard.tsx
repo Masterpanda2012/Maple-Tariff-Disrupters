@@ -45,28 +45,30 @@ export function ProductCard({
   return (
     <Link
       href={href}
-      className={`group flex flex-col overflow-hidden rounded-xl border border-charcoal/10 bg-white shadow-sm transition hover:border-maple/30 hover:shadow-md ${className}`}
+      className={`group flex flex-col overflow-hidden rounded-xl border border-charcoal/10 bg-white shadow-sm transition duration-500 ease-out will-change-transform hover:-translate-y-1.5 hover:border-maple/30 hover:shadow-xl hover:shadow-charcoal/15 motion-reduce:hover:translate-y-0 ${className}`}
     >
-      <div className="relative aspect-[4/3] w-full bg-cream">
+      <div className="relative aspect-[4/3] w-full overflow-hidden bg-cream">
         {imageUrl ? (
           <Image
             src={imageUrl}
             alt={name}
             fill
-            className="object-cover transition group-hover:scale-[1.02]"
+            className="object-cover transition duration-500 ease-out group-hover:scale-[1.04]"
             sizes="(max-width: 768px) 100vw, 33vw"
           />
         ) : (
           <div
-            className="flex h-full w-full items-center justify-center bg-gradient-to-br from-cream to-charcoal/5 text-charcoal/40"
+            className="flex h-full w-full items-center justify-center bg-gradient-to-br from-cream via-white to-charcoal/5 text-charcoal/40 transition duration-500 group-hover:from-cream group-hover:to-maple/5"
             aria-hidden
           >
-            <span className="text-sm font-medium">No image</span>
+            <span className="text-sm font-medium transition group-hover:text-charcoal/50">
+              No image
+            </span>
           </div>
         )}
       </div>
       <div className="flex flex-1 flex-col gap-2 p-4">
-        <h3 className="line-clamp-2 text-base font-semibold text-charcoal group-hover:text-maple">
+        <h3 className="line-clamp-2 text-base font-semibold text-charcoal transition-colors duration-200 group-hover:text-maple">
           {name}
         </h3>
         <p className="text-lg font-bold text-charcoal">{formatCad(price)}</p>

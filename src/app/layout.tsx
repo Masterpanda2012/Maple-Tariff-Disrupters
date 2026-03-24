@@ -10,7 +10,7 @@ import { Navbar } from "~/components/layout/Navbar";
 export const metadata: Metadata = {
   title: "Maple Tariff Disruptors",
   description:
-    "A Canadian platform for businesses to navigate economic swings and for people who want to support Canadian businesses find and buy Canadian products.",
+    "Trade-aware intelligence and a product marketplace for businesses and shoppers worldwide — clear economic briefings, supplier context, and local commerce.",
   icons: [{ rel: "icon", url: "/favicon.ico" }],
 };
 
@@ -26,9 +26,17 @@ export default function RootLayout({
     <html lang="en" className={`${geist.variable}`}>
       <body className="min-h-screen bg-background font-sans text-foreground antialiased">
         <AuthSessionProvider>
+          <a
+            href="#main-content"
+            className="sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:inline-block focus:overflow-visible focus:rounded-lg focus:bg-maple focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-white focus:shadow-lg"
+          >
+            Skip to main content
+          </a>
           <div className="flex min-h-screen flex-col">
             <Navbar />
-            <main className="flex-1">{children}</main>
+            <main id="main-content" className="flex-1" tabIndex={-1}>
+              {children}
+            </main>
             <Footer />
           </div>
         </AuthSessionProvider>

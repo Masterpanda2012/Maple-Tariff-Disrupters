@@ -1,16 +1,35 @@
 import OpenAI from "openai";
 import { z } from "zod";
 import type { BusinessProfile, NewsArticle } from "../../generated/prisma";
+import playbookData from "~/data/playbook/actions.json";
+import { ECONOMIC_ALERT_DISCLAIMER } from "~/lib/economic/constants";
 import { env } from "~/env";
 
 const DEFAULT_MODEL = "gpt-4o-mini";
 
 const llmReportSchema = z.object({
   title: z.string().min(1),
-  report: z.string().min(1),
+  whatChanged: z.string().min(1),
+  howItAffects: z.string().min(1),
+  whatToDo: z.array(z.string()).min(2).max(6),
+  severity: z.enum(["Watch", "Caution", "Act Now"]),
 });
 
-/** Raised when the model response is missing, not JSON, or fails `{ title, report }` validation. */
+export type ReportSectionsPayload = {
+  whatChanged: string;
+  howItAffects: string;
+  whatToDo: string[];
+  disclaimer: string;
+};
+
+export type GenerateBusinessReportResult = {
+  title: string;
+  report: string;
+  severity: "Watch" | "Caution" | "Act Now";
+  reportSections: ReportSectionsPayload;
+};
+
+/** Raised when the model response is missing, not JSON, or fails schema validation. */
 export class BusinessReportResponseError extends Error {
   readonly code: "empty_content" | "invalid_json" | "invalid_schema";
 
@@ -54,35 +73,75 @@ function jsonToLabel(value: unknown): string {
   }
 }
 
+function buildReportBody(
+  sections: Omit<ReportSectionsPayload, "disclaimer">,
+): string {
+  const lines = [
+    "## What changed",
+    sections.whatChanged.trim(),
+    "",
+    "## How it affects your business",
+    sections.howItAffects.trim(),
+    "",
+    "## What to do",
+    ...sections.whatToDo.map((a, i) => `${i + 1}. ${a.trim()}`),
+    "",
+    ECONOMIC_ALERT_DISCLAIMER,
+  ];
+  return lines.join("\n");
+}
+
+function playbookPromptSnippet(): string {
+  const entries = playbookData.entries ?? [];
+  return JSON.stringify(entries.slice(0, 4), null, 0);
+}
+
 /**
- * Uses the OpenAI API to turn tagged news articles and a business profile into a dashboard-ready
- * report: a short title plus a body that summarizes tariff / economic exposure and lists concrete
- * short-term and long-term actions, grounded in the supplied articles.
- *
- * **Happy path:** One or more `newsItems` and a valid `OPENAI_API_KEY`; model returns JSON with
- * `title` and `report`, which are validated and returned.
- *
- * **Edge cases:** If `newsItems` is empty, returns a fixed message without calling OpenAI (no API
- * key required). Article text is capped in the prompt to limit token usage on large summaries.
- *
- * **Error cases:** Throws if the API key is missing when articles are present; throws if the
- * model response is missing, invalid JSON, or fails schema validation; surfaces OpenAI/network
- * errors from the SDK.
+ * PFD-aligned economic alert: maps news + business exposure into plain-English sections
+ * (What changed / How it affects you / What to do) plus severity and legal disclaimer.
  */
 export async function generateBusinessReport(
   newsItems: NewsArticle[],
   profile: BusinessProfile,
-): Promise<{ title: string; report: string }> {
+): Promise<GenerateBusinessReportResult> {
+  const disclaimerBlock: ReportSectionsPayload = {
+    whatChanged: "",
+    howItAffects: "",
+    whatToDo: [],
+    disclaimer: ECONOMIC_ALERT_DISCLAIMER,
+  };
+
   if (newsItems.length === 0) {
+    const what =
+      "There are no matching economic news articles for your profile in the database right now.";
+    const affects =
+      "Once feeds are refreshed and articles align with your industry and supply chain, you will see tailored impact notes here.";
     return {
       title: "No matching news yet",
-      report:
-        "There are no tagged news articles in the database for your profile right now. Check back after the next news fetch, or broaden your industry and supplier tags when editing your business profile.",
+      severity: "Watch",
+      reportSections: {
+        ...disclaimerBlock,
+        whatChanged: what,
+        howItAffects: affects,
+        whatToDo: [
+          "Complete or update your business exposure profile so relevance scoring can improve.",
+          "Run “Generate new report” after the next scheduled news or FX polling cycle.",
+        ],
+      },
+      report: buildReportBody({
+        whatChanged: what,
+        howItAffects: affects,
+        whatToDo: [
+          "Complete or update your business exposure profile so relevance scoring can improve.",
+          "Run “Generate new report” after the next scheduled news or FX polling cycle.",
+        ],
+      }),
     };
   }
 
   const openai = getOpenAI();
   const suppliersLabel = jsonToLabel(profile.suppliers);
+  const exposureLabel = jsonToLabel(profile.exposureProfile);
 
   const articlesBlock = newsItems
     .map((a, i) => {
@@ -103,17 +162,22 @@ export async function generateBusinessReport(
     .join("\n\n---\n\n");
 
   const system = [
-    "You are an economic and trade advisor helping Canadian businesses respond to tariffs and global supply shocks.",
-    "Given a business profile and a set of news articles, produce a concise report.",
-    "Respond with a single JSON object only (no markdown fences) with keys: title (string), report (string).",
-    "The report must: (1) explain which developments matter for this business, (2) separate short-term actions from long-term actions to limit economic loss, (3) cite which articles informed each major point using titles or URLs.",
-    "Use clear Canadian English. Be practical and specific to the profile (industry, suppliers, mission).",
+    "You are an economic intelligence advisor for Canadian small businesses (MTD / PFD-style alerts).",
+    "Respond with a single JSON object only (no markdown fences). Keys: title, whatChanged, howItAffects, whatToDo, severity.",
+    "whatChanged: 1–2 sentences — factual summary of the economic event and magnitude, grounded ONLY in the supplied articles.",
+    "howItAffects: 2–4 sentences — tie the signal to this business using industry, suppliers, mission, description, and optional exposure profile fields. Give qualitative impact; if precise dollars are unknown, say so and give a percentage range or order-of-magnitude wording.",
+    "whatToDo: array of 2–4 concrete, time-bound actions. Align tone with this curated playbook (examples, adapt as needed):",
+    playbookPromptSnippet(),
+    `severity: one of Watch | Caution | Act Now — Watch = monitor; Caution = plan mitigations soon; Act Now = urgent operational response.`,
+    "Do not invent government URLs or statistics not implied by the articles. Use clear Canadian English.",
+    `Every alert must be consistent with this disclaimer text (do not omit from your reasoning): ${ECONOMIC_ALERT_DISCLAIMER}`,
   ].join(" ");
 
   const user = [
     `Company: ${profile.companyName}`,
     `Industry: ${profile.industry}`,
     `Suppliers (structured): ${suppliersLabel}`,
+    `Exposure profile (JSON, optional): ${exposureLabel || "{}"}`,
     `Mission: ${profile.mission}`,
     `Description: ${profile.description}`,
     "",
@@ -158,5 +222,22 @@ export async function generateBusinessReport(
     );
   }
 
-  return result.data;
+  const d = result.data;
+  const reportSections: ReportSectionsPayload = {
+    whatChanged: d.whatChanged,
+    howItAffects: d.howItAffects,
+    whatToDo: d.whatToDo,
+    disclaimer: ECONOMIC_ALERT_DISCLAIMER,
+  };
+
+  return {
+    title: d.title,
+    severity: d.severity,
+    reportSections,
+    report: buildReportBody({
+      whatChanged: d.whatChanged,
+      howItAffects: d.howItAffects,
+      whatToDo: d.whatToDo,
+    }),
+  };
 }

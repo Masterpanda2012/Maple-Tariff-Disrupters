@@ -49,7 +49,7 @@ function LoginForm() {
   }
 
   return (
-    <div className="w-full max-w-sm rounded-xl bg-white/10 p-8 shadow-lg backdrop-blur">
+    <div className="w-full max-w-sm animate-scale-in rounded-2xl border border-white/15 bg-white/10 p-8 shadow-2xl shadow-black/20 backdrop-blur-md">
       <h1 className="mb-6 text-center text-2xl font-bold tracking-tight">
         Log in
       </h1>
@@ -86,7 +86,7 @@ function LoginForm() {
         <button
           type="submit"
           disabled={pending}
-          className="mt-2 rounded-lg bg-[hsl(280,100%,70%)] px-4 py-2 font-semibold text-[#15162c] transition hover:brightness-110 disabled:opacity-50"
+          className="mt-2 rounded-xl bg-[hsl(280,100%,70%)] px-4 py-2.5 font-semibold text-[#15162c] shadow-lg shadow-black/20 transition duration-200 hover:-translate-y-0.5 hover:brightness-110 active:translate-y-0 disabled:translate-y-0 disabled:opacity-50"
         >
           {pending ? "Signing in…" : "Sign in"}
         </button>
@@ -111,16 +111,20 @@ function LoginForm() {
 
 export default function LoginPage() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c] px-4 text-white">
-      <Suspense
-        fallback={
-          <div className="w-full max-w-sm rounded-xl bg-white/10 p-8 text-center text-white/70 backdrop-blur">
-            Loading…
-          </div>
-        }
-      >
-        <LoginForm />
-      </Suspense>
+    <main className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-gradient-to-b from-[#2e026d] to-[#15162c] px-4 text-white">
+      <div className="pointer-events-none absolute -left-1/4 top-0 h-[min(480px,90vw)] w-[min(480px,90vw)] rounded-full bg-fuchsia-500/25 blur-3xl animate-hero-blob" />
+      <div className="pointer-events-none absolute -right-1/4 bottom-0 h-[min(400px,80vw)] w-[min(400px,80vw)] rounded-full bg-violet-600/20 blur-3xl animate-hero-blob-2" />
+      <div className="relative z-10 w-full max-w-sm">
+        <Suspense
+          fallback={
+            <div className="w-full rounded-2xl bg-white/10 p-8 text-center text-white/70 backdrop-blur">
+              Loading…
+            </div>
+          }
+        >
+          <LoginForm />
+        </Suspense>
+      </div>
     </main>
   );
 }

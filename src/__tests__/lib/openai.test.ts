@@ -28,6 +28,7 @@ const profile: BusinessProfile = {
   mission: "Build Canadian vehicles",
   description: "Tier-2 parts supplier",
   isVerified: false,
+  exposureProfile: null,
 };
 
 const article: NewsArticle = {
@@ -49,8 +50,14 @@ describe("generateBusinessReport", () => {
           message: {
             content: JSON.stringify({
               title: "Steel tariffs and your supply chain",
-              report:
-                "Short-term: lock in domestic quotes. Long-term: diversify suppliers. Sources: Steel tariffs rise (https://example.com/news/1).",
+              whatChanged: "Tariffs on imported steel increased per the cited article.",
+              howItAffects:
+                "As a parts supplier with US steel exposure, your landed costs may rise on affected orders.",
+              whatToDo: [
+                "Short-term: lock in domestic quotes where possible.",
+                "Long-term: diversify suppliers and cite Steel tariffs rise (https://example.com/news/1).",
+              ],
+              severity: "Caution",
             }),
           },
         },
@@ -62,7 +69,8 @@ describe("generateBusinessReport", () => {
     const { generateBusinessReport } = await import("~/lib/openai");
     const out = await generateBusinessReport([], profile);
     expect(out.title).toBe("No matching news yet");
-    expect(out.report).toContain("no tagged news articles");
+    expect(out.report).toContain("What changed");
+    expect(out.report).toContain("no matching economic news");
     expect(hoisted.completionsCreate).not.toHaveBeenCalled();
   });
 
@@ -71,7 +79,9 @@ describe("generateBusinessReport", () => {
     const { generateBusinessReport } = await import("~/lib/openai");
     const out = await generateBusinessReport([article], profile);
     expect(out.title).toBe("Steel tariffs and your supply chain");
+    expect(out.report).toContain("What changed");
     expect(out.report).toContain("Short-term");
+    expect(out.severity).toBe("Caution");
     expect(hoisted.completionsCreate).toHaveBeenCalledTimes(1);
   });
 
@@ -92,7 +102,7 @@ describe("generateBusinessReport", () => {
     }
   });
 
-  it("throws BusinessReportResponseError when JSON does not match { title, report }", async () => {
+  it("throws BusinessReportResponseError when JSON does not match the expected schema", async () => {
     vi.resetModules();
     hoisted.completionsCreate.mockResolvedValueOnce({
       choices: [

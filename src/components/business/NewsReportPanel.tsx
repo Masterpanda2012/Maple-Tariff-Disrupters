@@ -12,6 +12,8 @@ export type ClientNewsReport = {
   reportBody: string;
   createdAt: string;
   sources: Pick<NewsArticle, "id" | "title" | "url">[];
+  severity?: string | null;
+  reportSections?: unknown;
 };
 
 type NewsReportPanelProps = {
@@ -42,7 +44,7 @@ export function NewsReportPanel({ report }: NewsReportPanelProps) {
   }
 
   return (
-    <section className="flex flex-col gap-4">
+    <section className="flex flex-col gap-4 rounded-2xl border border-charcoal/10 bg-gradient-to-br from-white to-cream/40 p-5 shadow-sm sm:p-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h2 className="text-lg font-semibold text-charcoal">
           Economic news for your business
@@ -51,14 +53,20 @@ export function NewsReportPanel({ report }: NewsReportPanelProps) {
           type="button"
           onClick={generateNewReport}
           disabled={pending}
-          className="rounded-lg bg-maple px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:brightness-95 disabled:opacity-50"
+          className="rounded-xl bg-maple px-4 py-2.5 text-sm font-semibold text-white shadow-md shadow-maple/20 transition duration-200 hover:-translate-y-0.5 hover:brightness-105 hover:shadow-lg disabled:translate-y-0 disabled:opacity-50"
         >
           {pending ? "Generating…" : "Generate new report"}
         </button>
       </div>
       <p className="text-sm text-charcoal/70">
         We scan recent news that matches your industry and suppliers, then
-        summarize impacts and practical steps using AI.
+        produce a structured briefing: what changed, how it may affect you, and
+        what to do next — with a clear severity label. Not financial or legal
+        advice; see{" "}
+        <a href="/help#reports" className="font-medium text-maple underline-offset-2 hover:underline">
+          Help
+        </a>
+        .
       </p>
       {error ? (
         <p className="text-sm text-red-600" role="alert">
@@ -71,9 +79,11 @@ export function NewsReportPanel({ report }: NewsReportPanelProps) {
           reportBody={report.reportBody}
           createdAt={report.createdAt}
           sources={report.sources}
+          severity={report.severity}
+          reportSections={report.reportSections}
         />
       ) : (
-        <div className="rounded-xl border border-dashed border-charcoal/20 bg-cream/50 p-6 text-center text-sm text-charcoal/70">
+        <div className="rounded-xl border border-dashed border-charcoal/25 bg-cream/60 p-8 text-center text-sm text-charcoal/70 transition duration-300 hover:border-maple/25 hover:bg-cream/80">
           No report yet. Click &quot;Generate new report&quot; to run the
           analysis (this may take a minute).
         </div>
