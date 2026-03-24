@@ -5,7 +5,10 @@ const ROLE_BUSINESS = "BUSINESS";
 const ROLE_CUSTOMER = "CUSTOMER";
 
 export default async function middleware(req: NextRequest) {
-  const token = await getToken({ req, secret: process.env.AUTH_SECRET });
+  const token = await getToken({
+    req,
+    secret: process.env.NEXTAUTH_SECRET ?? process.env.AUTH_SECRET,
+  });
   if (!token?.sub) {
     const loginUrl = new URL("/login", req.nextUrl.origin);
     loginUrl.searchParams.set(
