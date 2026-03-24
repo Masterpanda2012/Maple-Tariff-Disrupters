@@ -32,9 +32,11 @@ describe("fetchLatestNews", () => {
     const articles = await fetchLatestNews();
 
     expect(articles).toHaveLength(1);
-    expect(articles[0].title).toBe("Tariff news");
-    expect(articles[0].url).toBe("https://example.com/news/1");
-    expect(articles[0].summary).toBe("Summary text");
+    expect(articles[0]).toMatchObject({
+      title: "Tariff news",
+      url: "https://example.com/news/1",
+      summary: "Summary text",
+    });
     expect(fetchMock).toHaveBeenCalled();
     const call = fetchMock.mock.calls[0];
     expect(call).toBeDefined();
