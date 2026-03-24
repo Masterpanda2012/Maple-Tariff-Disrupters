@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 
 export type ProductFormValues = {
   name: string;
@@ -65,10 +66,40 @@ export function ProductForm({
   );
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
 
   useEffect(() => {
     setValues(toFormValues(initial));
   }, [initial, mode, productId]);
+
+  async function handleImageFile(file: File) {
+    if (!file.type.startsWith("image/")) {
+      setError("Please upload an image file.");
+      return;
+    }
+    if (file.size > 2 * 1024 * 1024) {
+      setError("Image must be 2MB or smaller.");
+      return;
+    }
+    setError(null);
+    setUploadingImage(true);
+    try {
+      const dataUrl = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+          if (typeof reader.result === "string") resolve(reader.result);
+          else reject(new Error("Invalid file read result"));
+        };
+        reader.onerror = () => reject(reader.error ?? new Error("File read failed"));
+        reader.readAsDataURL(file);
+      });
+      setValues((v) => ({ ...v, imageUrl: dataUrl }));
+    } catch {
+      setError("Could not process image. Try a different file.");
+    } finally {
+      setUploadingImage(false);
+    }
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -205,6 +236,36 @@ export function ProductForm({
           placeholder="https://"
         />
       </label>
+      <div className="rounded-xl border border-dashed border-charcoal/20 bg-cream/40 p-3">
+        <label className="flex cursor-pointer flex-col gap-2 text-sm">
+          <span className="font-medium text-charcoal">Or upload image</span>
+          <input
+            type="file"
+            accept="image/*"
+            className="text-sm text-charcoal/70 file:mr-3 file:rounded-lg file:border-0 file:bg-maple file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-white hover:file:brightness-95"
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (file) void handleImageFile(file);
+            }}
+          />
+          <span className="text-xs text-charcoal/60">
+            JPG, PNG, WEBP or GIF up to 2MB. Uploading fills Image URL automatically.
+          </span>
+        </label>
+      </div>
+      {values.imageUrl ? (
+        <div className="overflow-hidden rounded-xl border border-charcoal/10 bg-white">
+          <div className="relative aspect-[16/10] w-full">
+            <Image
+              src={values.imageUrl}
+              alt="Product preview"
+              fill
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, 40rem"
+            />
+          </div>
+        </div>
+      ) : null}
       <label className="flex flex-col gap-1 text-sm">
         <span className="font-medium text-charcoal">Tags</span>
         <input
@@ -232,10 +293,14 @@ export function ProductForm({
         ) : null}
         <button
           type="submit"
-          disabled={pending}
+          disabled={pending || uploadingImage}
           className="rounded-lg bg-maple px-4 py-2 text-sm font-semibold text-white hover:brightness-95 disabled:opacity-50"
         >
-          {pending ? "Saving…" : mode === "create" ? "Create" : "Save changes"}
+          {pending || uploadingImage
+            ? "Saving…"
+            : mode === "create"
+              ? "Create"
+              : "Save changes"}
         </button>
       </div>
     </form>

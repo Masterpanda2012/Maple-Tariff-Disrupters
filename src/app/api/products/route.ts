@@ -17,7 +17,14 @@ const createBodySchema = z.object({
   description: z.string().min(1),
   price: z.union([z.number(), z.string()]),
   inventory: z.number().int().min(0),
-  imageUrl: z.union([z.string().url(), z.literal("")]).optional().nullable(),
+  imageUrl: z
+    .union([
+      z.string().url(),
+      z.string().regex(/^data:image\/[a-zA-Z0-9.+-]+;base64,[A-Za-z0-9+/=]+$/),
+      z.literal(""),
+    ])
+    .optional()
+    .nullable(),
   tags: z.array(z.string()),
 });
 

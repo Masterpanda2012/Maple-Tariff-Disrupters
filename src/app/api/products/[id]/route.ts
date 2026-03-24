@@ -17,7 +17,14 @@ const updateBodySchema = z
     description: z.string().min(1).optional(),
     price: z.union([z.number(), z.string()]).optional(),
     inventory: z.number().int().min(0).optional(),
-    imageUrl: z.union([z.string().url(), z.literal("")]).nullable().optional(),
+    imageUrl: z
+      .union([
+        z.string().url(),
+        z.string().regex(/^data:image\/[a-zA-Z0-9.+-]+;base64,[A-Za-z0-9+/=]+$/),
+        z.literal(""),
+      ])
+      .nullable()
+      .optional(),
     tags: z.array(z.string()).optional(),
   })
   .refine(

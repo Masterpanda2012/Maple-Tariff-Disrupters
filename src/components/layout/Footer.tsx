@@ -5,7 +5,7 @@ export function Footer() {
 
   return (
     <footer className="border-t border-maple/10 bg-gradient-to-b from-cream to-[#f2ece4]">
-      <div className="mx-auto flex max-w-6xl flex-col gap-8 px-4 py-10 sm:flex-row sm:items-start sm:justify-between">
+      <div className="mx-auto flex max-w-6xl flex-col gap-8 px-4 py-10 sm:flex-row sm:items-start sm:justify-between sm:px-5">
         <div className="animate-fade-in-left motion-reduce:animate-none flex min-w-0 flex-col gap-1">
           <Link
             href="/"
@@ -45,7 +45,7 @@ export function Footer() {
               Marketplace
             </Link>
           </nav>
-          <p className="text-sm text-charcoal/60">
+          <p className="border-t border-charcoal/10 pt-3 text-sm text-charcoal/60 sm:border-t-0 sm:pt-0">
             © {year} Maple Tariff Disruptors
           </p>
         </div>

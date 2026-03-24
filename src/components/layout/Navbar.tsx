@@ -44,10 +44,10 @@ export function Navbar() {
           : "border-charcoal/10 shadow-none"
       }`}
     >
-      <div className="mx-auto flex h-14 max-w-6xl items-center justify-between gap-4 px-4">
+      <div className="mx-auto flex h-14 max-w-6xl items-center justify-between gap-4 px-4 sm:px-5">
         <Link
           href="/"
-          className="group flex min-w-0 shrink-0 items-center gap-2 text-base font-semibold tracking-tight text-charcoal transition-opacity duration-200 hover:opacity-90"
+          className="group flex min-w-0 shrink-0 items-center gap-2 text-base font-semibold tracking-tight text-charcoal transition-all duration-300 hover:opacity-90"
         >
           <span
             aria-hidden
@@ -78,7 +78,7 @@ export function Navbar() {
             <>
               <Link
                 href="/help"
-                className="rounded-lg px-3 py-2 text-sm font-medium text-charcoal/90 transition-all duration-200 hover:bg-charcoal/5 hover:text-charcoal active:scale-[0.98] motion-reduce:active:scale-100"
+                className="rounded-lg px-3 py-2 text-sm font-medium text-charcoal/90 transition-all duration-300 hover:-translate-y-0.5 hover:bg-charcoal/5 hover:text-charcoal active:translate-y-0 motion-reduce:hover:translate-y-0"
               >
                 Help
               </Link>
