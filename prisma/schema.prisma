@@ -8,8 +8,6 @@ generator client {
 
 datasource db {
     provider = "postgresql"
-    // Use Neon, Supabase, or Vercel Postgres in production (serverless cannot use SQLite).
-    url      = env("DATABASE_URL")
 }
 
 enum UserRole {
