@@ -3,6 +3,10 @@
     {
       "path": "/api/cron/fetch-news",
       "schedule": "0 * * * *"
+    },
+    {
+      "path": "/api/cron/fetch-fx",
+      "schedule": "15 * * * *"
     }
   ]
 }

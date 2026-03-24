@@ -1,17 +1,14 @@
 /**
- * Next.js server bootstrap: schedules news ingestion and runs one sync when Diffy is configured
- * so the database is populated without relying only on external cron calls.
+ * Next.js server bootstrap (Node runtime only): optional one-shot syncs after deploy.
+ * Scheduled news/FX ingestion uses Vercel Cron → `/api/cron/fetch-news` and `/api/cron/fetch-fx`
+ * (serverless has no long-lived `node-cron` process).
  */
 export async function register() {
   if (process.env.NEXT_RUNTIME !== "nodejs") return;
 
-  const { startNewsCron, syncNewsArticlesFromDiffy } = await import(
-    "~/lib/news-cron"
-  );
-  startNewsCron();
-
   const { env } = await import("~/env");
   if (env.DIFFY_API_URL && env.DIFFY_API_KEY) {
+    const { syncNewsArticlesFromDiffy } = await import("~/lib/news-sync");
     void syncNewsArticlesFromDiffy().catch((err: unknown) => {
       console.error("[instrumentation] initial news sync failed:", err);
     });

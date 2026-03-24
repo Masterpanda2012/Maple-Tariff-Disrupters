@@ -155,7 +155,7 @@ export async function saveBusinessReport(
       reportBody: report.report,
       sourceArticleIds: report.sourceArticleIds as Prisma.InputJsonValue,
       ...(report.reportSections !== undefined && {
-        reportSections: report.reportSections as Prisma.InputJsonValue,
+        reportSections: report.reportSections,
       }),
       ...(report.severity !== undefined && { severity: report.severity }),
     },

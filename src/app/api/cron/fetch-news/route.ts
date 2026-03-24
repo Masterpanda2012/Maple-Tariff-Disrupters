@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { env } from "~/env";
-import { syncNewsArticlesFromDiffy } from "~/lib/news-cron";
+import { syncNewsArticlesFromDiffy } from "~/lib/news-sync";
 
 function extractBearerToken(authorization: string | null): string | null {
   if (!authorization) return null;

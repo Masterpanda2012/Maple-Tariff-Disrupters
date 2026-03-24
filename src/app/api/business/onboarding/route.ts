@@ -1,7 +1,10 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
-import { UserRole } from "../../../../../generated/prisma";
+import {
+  type Prisma,
+  UserRole,
+} from "../../../../../generated/prisma";
 import { upsertBusinessProfile } from "~/lib/actions/business";
 import { auth } from "~/lib/auth";
 
@@ -43,7 +46,9 @@ export async function POST(request: Request) {
     const { exposureProfile, ...rest } = parsed.data;
     const profile = await upsertBusinessProfile(session.user.id, {
       ...rest,
-      ...(exposureProfile !== undefined && { exposureProfile }),
+      ...(exposureProfile !== undefined && {
+        exposureProfile: exposureProfile as Prisma.JsonValue,
+      }),
     });
     return NextResponse.json({ profile });
   } catch (e) {

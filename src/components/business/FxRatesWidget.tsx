@@ -54,21 +54,21 @@ export function FxRatesWidget() {
           {error}
         </p>
       ) : null}
-      {!error && data && data.rates.length === 0 ? (
+      {!error && data?.rates.length === 0 ? (
         <p className="mt-3 text-sm text-charcoal/65">
           No rates stored yet. They appear after the server runs an FX sync
           (startup or scheduled job).
         </p>
       ) : null}
-      {!error && data && data.rates.length > 0 ? (
+      {!error && (data?.rates.length ?? 0) > 0 ? (
         <ul className="mt-4 space-y-2">
-          {data.rates.map((r) => (
+          {data?.rates.map((r) => (
             <li
               key={r.quote}
               className="flex items-baseline justify-between gap-4 text-sm"
             >
               <span className="font-medium text-charcoal">
-                {data.base}/{r.quote}
+                {data?.base}/{r.quote}
               </span>
               <span className="tabular-nums text-charcoal/85">
                 {r.rate.toFixed(4)}

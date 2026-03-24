@@ -1,6 +1,6 @@
 "use server";
 
-import type { Prisma } from "../../../generated/prisma";
+import { Prisma } from "../../../generated/prisma";
 import type { NewsReportWithSources } from "~/types";
 import { db } from "~/server/db";
 
@@ -62,7 +62,7 @@ export async function upsertBusinessProfile(
       ...(data.exposureProfile !== undefined && {
         exposureProfile:
           data.exposureProfile === null
-            ? null
+            ? Prisma.DbNull
             : (data.exposureProfile as Prisma.InputJsonValue),
       }),
     },
