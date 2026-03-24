@@ -39,23 +39,23 @@ export default async function MarketplaceProductPage({ params }: PageProps) {
     session?.user?.role === UserRole.CUSTOMER;
 
   return (
-    <main className="min-h-screen bg-cream px-4 py-10 text-charcoal">
+    <main className="min-h-screen bg-gradient-to-b from-cream via-cream to-[#f1ece5] px-4 py-10 text-charcoal">
       <div className="mx-auto max-w-3xl">
         <Link
           href="/marketplace"
-          className="text-sm font-medium text-maple underline-offset-2 hover:underline"
+          className="animate-fade-in-up text-sm font-medium text-maple underline-offset-2 hover:underline motion-reduce:animate-none"
         >
           ← Back to marketplace
         </Link>
 
-        <article className="mt-6 overflow-hidden rounded-2xl border border-charcoal/10 bg-white shadow-sm">
+        <article className="animate-fade-in-up mt-6 overflow-hidden rounded-2xl border border-charcoal/10 bg-white shadow-sm motion-reduce:animate-none">
           <div className="relative aspect-[16/10] w-full bg-cream">
             {product.imageUrl ? (
               <Image
                 src={product.imageUrl}
                 alt={product.name}
                 fill
-                className="object-cover"
+                className="object-cover transition duration-500 ease-out hover:scale-[1.02]"
                 sizes="(max-width: 768px) 100vw, 42rem"
                 priority
               />
@@ -70,16 +70,21 @@ export default async function MarketplaceProductPage({ params }: PageProps) {
             <p className="mt-2 text-2xl font-semibold text-maple">
               {formatCad(product.price)}
             </p>
-            <p className="mt-1 text-sm font-medium text-charcoal/80">
-              {product.business.companyName}
-            </p>
+            <div className="mt-3 flex flex-wrap items-center gap-2">
+              <span className="rounded-full bg-maple/10 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-maple">
+                {product.business.companyName}
+              </span>
+              <span className="rounded-full bg-charcoal/5 px-3 py-1 text-xs text-charcoal/65">
+                Verified listing
+              </span>
+            </div>
             <p className="mt-6 whitespace-pre-wrap text-sm leading-relaxed text-charcoal/90">
               {product.description}
             </p>
           </div>
         </article>
 
-        <section className="mt-10">
+        <section className="animate-fade-in-up mt-10 rounded-2xl border border-charcoal/10 bg-white p-6 shadow-sm delay-100 motion-reduce:animate-none">
           <h2 className="text-lg font-semibold text-charcoal">Reviews</h2>
           <div className="mt-4">
             <ReviewList reviews={reviews} />
@@ -87,11 +92,11 @@ export default async function MarketplaceProductPage({ params }: PageProps) {
         </section>
 
         {showReviewForm ? (
-          <div className="mt-8">
+          <div className="animate-fade-in-up mt-8 delay-150 motion-reduce:animate-none">
             <ReviewForm productId={product.id} />
           </div>
         ) : (
-          <p className="mt-8 rounded-lg border border-charcoal/10 bg-white px-4 py-3 text-sm text-charcoal/70">
+          <p className="animate-fade-in-up mt-8 rounded-lg border border-charcoal/10 bg-white px-4 py-3 text-sm text-charcoal/70 delay-150 motion-reduce:animate-none">
             <Link
               href="/login"
               className="font-semibold text-maple underline-offset-2 hover:underline"

@@ -14,11 +14,14 @@ export default function MarketplacePage() {
         }}
       />
       <div className="relative mx-auto flex max-w-6xl flex-col gap-8">
-        <header className="animate-fade-in-up motion-reduce:animate-none">
-          <h1 className="text-3xl font-bold tracking-tight text-charcoal sm:text-4xl">
+        <header className="animate-fade-in-up rounded-2xl border border-charcoal/10 bg-white/80 p-6 shadow-sm motion-reduce:animate-none sm:p-7">
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-maple/80">
+            Customer marketplace
+          </p>
+          <h1 className="mt-2 text-3xl font-bold tracking-tight text-charcoal sm:text-4xl">
             Marketplace
           </h1>
-          <p className="mt-2 max-w-xl text-base text-charcoal/70">
+          <p className="mt-3 max-w-2xl text-base text-charcoal/70">
             Discover products from verified business sellers, compare prices and
             reviews, and support teams you trust — wherever they ship from.{" "}
             <a

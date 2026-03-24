@@ -117,9 +117,21 @@ export function ProductGrid() {
 
   const { products, total, page, pageSize } = data;
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
+  const start = (page - 1) * pageSize + 1;
+  const end = Math.min(total, page * pageSize);
 
   return (
     <div className="flex flex-col gap-8">
+      <div className="animate-fade-in-up flex items-center justify-between rounded-2xl border border-charcoal/10 bg-white/75 px-4 py-3 text-sm motion-reduce:animate-none">
+        <p className="font-medium text-charcoal/75">
+          Showing <span className="text-charcoal">{start}</span>-
+          <span className="text-charcoal">{end}</span> of{" "}
+          <span className="text-charcoal">{total}</span> products
+        </p>
+        <p className="tabular-nums text-charcoal/65">
+          Page {page}/{totalPages}
+        </p>
+      </div>
       <ul className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {products.map((p, i) => (
           <li
