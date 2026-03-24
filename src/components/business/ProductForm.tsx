@@ -67,10 +67,52 @@ export function ProductForm({
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
+  const [dragActive, setDragActive] = useState(false);
 
   useEffect(() => {
     setValues(toFormValues(initial));
   }, [initial, mode, productId]);
+
+  async function compressImageToDataUrl(file: File): Promise<string> {
+    const source = await new Promise<HTMLImageElement>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        if (typeof reader.result !== "string") {
+          reject(new Error("Invalid image source"));
+          return;
+        }
+        const img = document.createElement("img");
+        img.onload = () => resolve(img);
+        img.onerror = () => reject(new Error("Could not decode image"));
+        img.src = reader.result;
+      };
+      reader.onerror = () => reject(reader.error ?? new Error("File read failed"));
+      reader.readAsDataURL(file);
+    });
+
+    const MAX_DIMENSION = 1600;
+    const scale = Math.min(
+      1,
+      MAX_DIMENSION / Math.max(source.naturalWidth, source.naturalHeight),
+    );
+    const width = Math.max(1, Math.round(source.naturalWidth * scale));
+    const height = Math.max(1, Math.round(source.naturalHeight * scale));
+
+    const canvas = document.createElement("canvas");
+    canvas.width = width;
+    canvas.height = height;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) {
+      throw new Error("Could not create canvas context");
+    }
+    ctx.drawImage(source, 0, 0, width, height);
+
+    // Preserve PNG/GIF, otherwise convert to compressed JPEG.
+    const mime = /png|gif|webp/i.test(file.type) ? file.type : "image/jpeg";
+    const quality = mime === "image/jpeg" ? 0.82 : undefined;
+    const dataUrl = canvas.toDataURL(mime, quality);
+    return dataUrl;
+  }
 
   async function handleImageFile(file: File) {
     if (!file.type.startsWith("image/")) {
@@ -84,15 +126,7 @@ export function ProductForm({
     setError(null);
     setUploadingImage(true);
     try {
-      const dataUrl = await new Promise<string>((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => {
-          if (typeof reader.result === "string") resolve(reader.result);
-          else reject(new Error("Invalid file read result"));
-        };
-        reader.onerror = () => reject(reader.error ?? new Error("File read failed"));
-        reader.readAsDataURL(file);
-      });
+      const dataUrl = await compressImageToDataUrl(file);
       setValues((v) => ({ ...v, imageUrl: dataUrl }));
     } catch {
       setError("Could not process image. Try a different file.");
@@ -236,7 +270,27 @@ export function ProductForm({
           placeholder="https://"
         />
       </label>
-      <div className="rounded-xl border border-dashed border-charcoal/20 bg-cream/40 p-3">
+      <div
+        className={`rounded-xl border border-dashed p-3 transition-colors ${
+          dragActive
+            ? "border-maple/60 bg-maple/5"
+            : "border-charcoal/20 bg-cream/40"
+        }`}
+        onDragOver={(e) => {
+          e.preventDefault();
+          setDragActive(true);
+        }}
+        onDragLeave={(e) => {
+          e.preventDefault();
+          setDragActive(false);
+        }}
+        onDrop={(e) => {
+          e.preventDefault();
+          setDragActive(false);
+          const file = e.dataTransfer.files?.[0];
+          if (file) void handleImageFile(file);
+        }}
+      >
         <label className="flex cursor-pointer flex-col gap-2 text-sm">
           <span className="font-medium text-charcoal">Or upload image</span>
           <input
@@ -249,7 +303,8 @@ export function ProductForm({
             }}
           />
           <span className="text-xs text-charcoal/60">
-            JPG, PNG, WEBP or GIF up to 2MB. Uploading fills Image URL automatically.
+            Drag & drop or choose a file. JPG, PNG, WEBP or GIF up to 2MB.
+            Uploading fills Image URL automatically.
           </span>
         </label>
       </div>
