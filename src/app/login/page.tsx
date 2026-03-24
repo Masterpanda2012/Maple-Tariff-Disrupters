@@ -51,22 +51,28 @@ function LoginForm() {
   }
 
   return (
-    <div className="w-full max-w-md animate-scale-in rounded-2xl border border-white/15 bg-white/10 p-8 shadow-2xl shadow-black/20 backdrop-blur-md">
-      <h1 className="mb-6 text-center text-2xl font-bold tracking-tight">
+    <div className="w-full max-w-md animate-scale-in rounded-2xl border border-white/15 bg-white/10 p-8 shadow-2xl shadow-black/20 backdrop-blur-md motion-reduce:animate-none">
+      <p className="animate-fade-in-up text-center text-xs font-semibold uppercase tracking-[0.2em] text-white/60 motion-reduce:animate-none">
+        Account Access
+      </p>
+      <h1 className="mb-4 mt-2 animate-fade-in-up text-center text-2xl font-bold tracking-tight delay-75 motion-reduce:animate-none">
         Log in
       </h1>
-      <p className="mb-6 rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-center text-sm text-white/80">
+      <p className="mb-6 animate-fade-in-up rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-center text-sm text-white/80 delay-100 motion-reduce:animate-none">
         Welcome back. Sign in to continue tracking news alerts and marketplace
         activity.
       </p>
-      <form onSubmit={onSubmit} className="flex flex-col gap-4">
+      <form
+        onSubmit={onSubmit}
+        className="animate-fade-in-up flex flex-col gap-4 delay-150 motion-reduce:animate-none"
+      >
         <label className="flex flex-col gap-1 text-sm">
           <span className="text-white/80">Email</span>
           <input
             name="email"
             type="email"
             autoComplete="email"
-            className="rounded-lg border border-white/20 bg-white/10 px-3 py-2 text-white placeholder:text-white/40 focus:border-[hsl(280,100%,70%)] focus:outline-none focus:ring-1 focus:ring-[hsl(280,100%,70%)]"
+            className="rounded-lg border border-white/20 bg-white/10 px-3 py-2 text-white placeholder:text-white/40 transition duration-300 focus:border-[hsl(280,100%,70%)] focus:outline-none focus:ring-1 focus:ring-[hsl(280,100%,70%)]"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
@@ -78,7 +84,7 @@ function LoginForm() {
             name="password"
             type="password"
             autoComplete="current-password"
-            className="rounded-lg border border-white/20 bg-white/10 px-3 py-2 text-white placeholder:text-white/40 focus:border-[hsl(280,100%,70%)] focus:outline-none focus:ring-1 focus:ring-[hsl(280,100%,70%)]"
+            className="rounded-lg border border-white/20 bg-white/10 px-3 py-2 text-white placeholder:text-white/40 transition duration-300 focus:border-[hsl(280,100%,70%)] focus:outline-none focus:ring-1 focus:ring-[hsl(280,100%,70%)]"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
@@ -92,12 +98,12 @@ function LoginForm() {
         <button
           type="submit"
           disabled={pending}
-          className="mt-2 rounded-xl bg-[hsl(280,100%,70%)] px-4 py-2.5 font-semibold text-[#15162c] shadow-lg shadow-black/20 transition duration-200 hover:-translate-y-0.5 hover:brightness-110 active:translate-y-0 disabled:translate-y-0 disabled:opacity-50"
+          className="mt-2 rounded-xl bg-[hsl(280,100%,70%)] px-4 py-2.5 font-semibold text-[#15162c] shadow-lg shadow-black/20 transition duration-300 hover:-translate-y-0.5 hover:brightness-110 hover:shadow-xl active:translate-y-0 disabled:translate-y-0 disabled:opacity-50"
         >
           {pending ? "Signing in…" : "Sign in"}
         </button>
       </form>
-      <p className="mt-6 text-center text-sm text-white/70">
+      <p className="mt-6 animate-fade-in-up text-center text-sm text-white/70 delay-300 motion-reduce:animate-none">
         No account?{" "}
         <Link
           href="/register"
@@ -106,7 +112,7 @@ function LoginForm() {
           Register
         </Link>
       </p>
-      <p className="mt-4 text-center">
+      <p className="mt-4 animate-fade-in-up text-center delay-[350ms] motion-reduce:animate-none">
         <Link href="/" className="text-sm text-white/50 hover:text-white/80">
           ← Back home
         </Link>
