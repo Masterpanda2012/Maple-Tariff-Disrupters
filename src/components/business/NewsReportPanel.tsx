@@ -1,5 +1,6 @@
 "use client";
 
+import { motion, useReducedMotion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -22,6 +23,7 @@ type NewsReportPanelProps = {
 
 export function NewsReportPanel({ report }: NewsReportPanelProps) {
   const router = useRouter();
+  const reduce = useReducedMotion();
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -49,14 +51,16 @@ export function NewsReportPanel({ report }: NewsReportPanelProps) {
         <h2 className="text-lg font-semibold text-charcoal">
           Economic news for your business
         </h2>
-        <button
+        <motion.button
           type="button"
           onClick={generateNewReport}
           disabled={pending}
+          whileHover={reduce || pending ? undefined : { y: -2 }}
+          whileTap={reduce || pending ? undefined : { scale: 0.98 }}
           className="rounded-xl bg-maple px-4 py-2.5 text-sm font-semibold text-white shadow-md shadow-maple/20 transition duration-200 hover:-translate-y-0.5 hover:brightness-105 hover:shadow-lg disabled:translate-y-0 disabled:opacity-50"
         >
           {pending ? "Generating…" : "Generate new report"}
-        </button>
+        </motion.button>
       </div>
       <p className="text-sm text-charcoal/70">
         We scan recent news that matches your industry and suppliers, then
@@ -83,10 +87,15 @@ export function NewsReportPanel({ report }: NewsReportPanelProps) {
           reportSections={report.reportSections}
         />
       ) : (
-        <div className="rounded-xl border border-dashed border-charcoal/25 bg-cream/60 p-8 text-center text-sm text-charcoal/70 transition duration-300 hover:border-maple/25 hover:bg-cream/80">
+        <motion.div
+          initial={reduce ? undefined : { opacity: 0, y: 10 }}
+          animate={reduce ? undefined : { opacity: 1, y: 0 }}
+          transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+          className="rounded-xl border border-dashed border-charcoal/25 bg-cream/60 p-8 text-center text-sm text-charcoal/70 transition duration-300 hover:border-maple/25 hover:bg-cream/80"
+        >
           No report yet. Click &quot;Generate new report&quot; to run the
           analysis (this may take a minute).
-        </div>
+        </motion.div>
       )}
     </section>
   );

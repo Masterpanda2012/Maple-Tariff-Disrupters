@@ -13,6 +13,7 @@ import {
 } from "~/lib/actions/business";
 import { countProductsByBusinessId } from "~/lib/actions/products";
 import { auth } from "~/lib/auth";
+import { RefreshIntelligenceButton } from "~/components/business/RefreshIntelligenceButton";
 
 export default async function BusinessDashboardPage() {
   const session = await auth();
@@ -51,26 +52,33 @@ export default async function BusinessDashboardPage() {
   return (
     <div className="mx-auto max-w-6xl px-4 py-10">
       <header className="mb-10 flex flex-col gap-2 animate-fade-in-up">
-        <h1 className="text-3xl font-semibold tracking-tight text-charcoal sm:text-4xl">
-          Welcome back, {profile.companyName}
-        </h1>
-        <p className="text-lg text-charcoal/70">
-          Stay ahead of tariffs, currency moves, and trade news tailored to how
-          you operate — wherever you sell or source.
-        </p>
-        <div className="mt-4 flex flex-wrap gap-3 text-sm">
-          <Link
-            href="/business/settings"
-            className="inline-flex rounded-lg border border-charcoal/20 bg-white px-4 py-2 font-medium text-charcoal shadow-sm transition hover:border-maple/30 hover:bg-cream"
-          >
-            Profile &amp; exposure settings
-          </Link>
-          <Link
-            href="/help"
-            className="inline-flex rounded-lg border border-transparent px-4 py-2 font-medium text-maple underline-offset-2 hover:underline"
-          >
-            How intelligence reports work
-          </Link>
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+          <div className="min-w-0">
+            <h1 className="text-3xl font-semibold tracking-tight text-charcoal sm:text-4xl">
+              Welcome back, {profile.companyName}
+            </h1>
+            <p className="mt-2 text-lg text-charcoal/70">
+              Stay ahead of tariffs, currency moves, and trade news tailored to how
+              you operate — wherever you sell or source.
+            </p>
+            <div className="mt-4 flex flex-wrap gap-3 text-sm">
+              <Link
+                href="/business/settings"
+                className="inline-flex rounded-lg border border-charcoal/20 bg-white px-4 py-2 font-medium text-charcoal shadow-sm transition hover:border-maple/30 hover:bg-cream"
+              >
+                Profile &amp; exposure settings
+              </Link>
+              <Link
+                href="/help"
+                className="inline-flex rounded-lg border border-transparent px-4 py-2 font-medium text-maple underline-offset-2 hover:underline"
+              >
+                How intelligence reports work
+              </Link>
+            </div>
+          </div>
+          <div className="lg:pt-1">
+            <RefreshIntelligenceButton />
+          </div>
         </div>
       </header>
 

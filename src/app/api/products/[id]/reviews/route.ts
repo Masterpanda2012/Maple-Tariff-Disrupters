@@ -4,6 +4,7 @@ import { z } from "zod";
 import { UserRole } from "../../../../../../generated/prisma";
 import { createReview, getReviewsForProduct } from "~/lib/actions/reviews";
 import { auth } from "~/lib/auth";
+import { getClientIp, rateLimit } from "~/lib/rate-limit";
 
 /** Prisma uses cuid-style ids; tests may use shorter placeholders. */
 const productIdSchema = z.string().min(1).max(128);
@@ -44,6 +45,18 @@ export async function POST(
   }
   if (session.user.role !== UserRole.CUSTOMER) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
+  const ip = getClientIp(request);
+  const rl = rateLimit(`review:${session.user.id}:${ip}`, {
+    limit: 12,
+    windowMs: 60_000,
+  });
+  if (!rl.ok) {
+    return NextResponse.json(
+      { error: "Too many review attempts. Please wait and try again." },
+      { status: 429, headers: { "Retry-After": String(rl.retryAfterSec) } },
+    );
   }
 
   let body: unknown;

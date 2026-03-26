@@ -158,6 +158,13 @@ export function Navbar() {
                     </span>
                   </summary>
                   <div className="user-menu-dropdown absolute right-0 mt-1 min-w-[12rem] origin-top-right scale-95 rounded-lg border border-charcoal/10 bg-white py-1 opacity-0 shadow-xl shadow-charcoal/10 transition duration-200 ease-out">
+                    <Link
+                      href="/account"
+                      className="mx-1 block rounded-md px-3 py-2 text-left text-sm text-charcoal transition hover:bg-cream"
+                    >
+                      Account settings
+                    </Link>
+                    <div className="my-1 h-px bg-charcoal/10" />
                     <form action={signOutAction} className="px-1 py-0.5">
                       <button
                         type="submit"

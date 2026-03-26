@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 
 import { UserRole } from "../../../../../generated/prisma";
+import { getClientIp, rateLimit } from "~/lib/rate-limit";
 import { db } from "~/server/db";
 
 export const runtime = "nodejs";
@@ -14,6 +15,15 @@ const registerSchema = z.object({
 });
 
 export async function POST(request: Request) {
+  const ip = getClientIp(request);
+  const rl = rateLimit(`register:${ip}`, { limit: 6, windowMs: 60_000 });
+  if (!rl.ok) {
+    return NextResponse.json(
+      { error: "Too many attempts. Please wait and try again." },
+      { status: 429, headers: { "Retry-After": String(rl.retryAfterSec) } },
+    );
+  }
+
   let body: unknown;
   try {
     body = await request.json();

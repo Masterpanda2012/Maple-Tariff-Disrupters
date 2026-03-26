@@ -5,6 +5,7 @@ import { UserRole } from "../../../../generated/prisma";
 import { getBusinessProfile } from "~/lib/actions/business";
 import { createProduct, getProducts } from "~/lib/actions/products";
 import { auth } from "~/lib/auth";
+import { getClientIp, rateLimit } from "~/lib/rate-limit";
 
 const listQuerySchema = z.object({
   search: z.string().optional(),
@@ -66,6 +67,18 @@ export async function POST(request: Request) {
   }
   if (session.user.role !== UserRole.BUSINESS) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
+  const ip = getClientIp(request);
+  const rl = rateLimit(`products:create:${session.user.id}:${ip}`, {
+    limit: 20,
+    windowMs: 60_000,
+  });
+  if (!rl.ok) {
+    return NextResponse.json(
+      { error: "Too many product updates. Please wait and try again." },
+      { status: 429, headers: { "Retry-After": String(rl.retryAfterSec) } },
+    );
   }
 
   const profile = await getBusinessProfile(session.user.id);
