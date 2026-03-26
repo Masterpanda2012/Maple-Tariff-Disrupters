@@ -8,11 +8,19 @@ export const env = createEnv({
    */
   server: {
     AUTH_SECRET: z.string().min(1),
+    /**
+     * Canonical origin for Auth.js OAuth callbacks in production (e.g. https://app.vercel.app).
+     * Falls back to NEXT_PUBLIC_APP_URL when unset. Set explicitly if the app URL differs from the public URL.
+     */
+    AUTH_URL: z.string().url().optional(),
     DATABASE_URL: z.string().min(1),
     OPENAI_API_KEY: z.string().min(1).optional(),
     DIFFY_API_KEY: z.string().min(1).optional(),
     DIFFY_API_URL: z.string().url().optional(),
     CRON_SECRET: z.string().min(1).optional(),
+    /** Google OAuth (optional). When both are set, “Continue with Google” is enabled. */
+    GOOGLE_CLIENT_ID: z.string().min(1).optional(),
+    GOOGLE_CLIENT_SECRET: z.string().min(1).optional(),
     NODE_ENV: z
       .enum(["development", "test", "production"])
       .default("development"),
@@ -34,11 +42,17 @@ export const env = createEnv({
    */
   runtimeEnv: {
     AUTH_SECRET: process.env.NEXTAUTH_SECRET ?? process.env.AUTH_SECRET,
+    AUTH_URL:
+      process.env.AUTH_URL ??
+      process.env.NEXTAUTH_URL ??
+      process.env.NEXT_PUBLIC_APP_URL,
     DATABASE_URL: process.env.DATABASE_URL,
     OPENAI_API_KEY: process.env.OPENAI_API_KEY,
     DIFFY_API_KEY: process.env.DIFFY_API_KEY,
     DIFFY_API_URL: process.env.DIFFY_API_URL,
     CRON_SECRET: process.env.CRON_SECRET,
+    GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
+    GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
     NODE_ENV: process.env.NODE_ENV,
     NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
   },
