@@ -5,16 +5,14 @@ type Bucket = {
   resetAtMs: number;
 };
 
-const globalForRateLimit = globalThis as unknown as {
+type RateLimitGlobal = {
   __rateLimitBuckets?: Map<string, Bucket>;
 };
 
-const buckets: Map<string, Bucket> =
-  globalForRateLimit.__rateLimitBuckets ?? new Map();
+const globalForRateLimit = globalThis as unknown as RateLimitGlobal;
+globalForRateLimit.__rateLimitBuckets ??= new Map<string, Bucket>();
 
-if (!globalForRateLimit.__rateLimitBuckets) {
-  globalForRateLimit.__rateLimitBuckets = buckets;
-}
+const buckets = globalForRateLimit.__rateLimitBuckets;
 
 export type RateLimitOptions = {
   /** Requests per window. */
@@ -36,12 +34,21 @@ export function rateLimit(
   const existing = buckets.get(key);
 
   if (!existing || existing.resetAtMs <= nowMs) {
-    buckets.set(key, { remaining: Math.max(0, limit - 1), resetAtMs: nowMs + windowMs });
+    buckets.set(key, {
+      remaining: Math.max(0, limit - 1),
+      resetAtMs: nowMs + windowMs,
+    });
     return { ok: true };
   }
 
   if (existing.remaining <= 0) {
-    return { ok: false, retryAfterSec: Math.max(1, Math.ceil((existing.resetAtMs - nowMs) / 1000)) };
+    return {
+      ok: false,
+      retryAfterSec: Math.max(
+        1,
+        Math.ceil((existing.resetAtMs - nowMs) / 1000),
+      ),
+    };
   }
 
   existing.remaining -= 1;
