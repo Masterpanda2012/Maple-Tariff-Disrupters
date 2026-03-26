@@ -1,0 +1,36 @@
+{
+  "version": "1.0",
+  "description": "PFD-aligned action playbook. Edit entries without code changes; referenced in LLM prompts for alert generation.",
+  "entries": [
+    {
+      "signal_type": "currency",
+      "direction": "CAD_weakening",
+      "severity": "act_now",
+      "exposure_conditions": ["us_supplier", "usd_invoicing"],
+      "actions": [
+        "Contact your top US supplier this week to ask about locking in current pricing for 60–90 days.",
+        "Review open USD-denominated invoices and consider accelerating payment before further CAD weakening.",
+        "Explore whether equivalent Canadian domestic suppliers can quote the same materials."
+      ]
+    },
+    {
+      "signal_type": "tariff",
+      "severity": "caution",
+      "exposure_conditions": ["import_reliant", "materials_sensitive"],
+      "actions": [
+        "Map which SKUs or contracts are exposed to the affected tariff lines.",
+        "Talk to your customs broker or freight forwarder about timing of landed cost changes.",
+        "Model a 5–10% cost pass-through scenario with your finance lead."
+      ]
+    },
+    {
+      "signal_type": "logistics",
+      "severity": "watch",
+      "exposure_conditions": ["shipping_sensitive"],
+      "actions": [
+        "Review inbound lead times and safety stock for affected lanes.",
+        "Ask carriers for firm quotes on the next 30 days rather than spot-only pricing."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,160 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+    provider = "prisma-client-js"
+    output   = "../generated/prisma"
+}
+
+datasource db {
+    provider = "postgresql"
+}
+
+enum UserRole {
+    BUSINESS
+    CUSTOMER
+}
+
+// Necessary for Next auth
+model Account {
+    id                       String  @id @default(cuid())
+    userId                   String
+    type                     String
+    provider                 String
+    providerAccountId        String
+    refresh_token            String? @db.Text
+    access_token             String? @db.Text
+    expires_at               Int?
+    token_type               String?
+    scope                    String?
+    id_token                 String? @db.Text
+    session_state            String?
+    user                     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+    refresh_token_expires_in Int?
+
+    @@unique([provider, providerAccountId])
+}
+
+model Session {
+    id           String   @id @default(cuid())
+    sessionToken String   @unique
+    userId       String
+    expires      DateTime
+    user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model User {
+    id            String    @id @default(cuid())
+    username      String    @unique
+    passwordHash  String
+    name          String?
+    email         String?   @unique
+    emailVerified DateTime?
+    image         String?
+    role          UserRole  @default(CUSTOMER)
+    createdAt     DateTime  @default(now())
+
+    accounts        Account[]
+    sessions        Session[]
+    businessProfile BusinessProfile?
+    reviews         Review[]
+}
+
+model VerificationToken {
+    identifier String
+    token      String   @unique
+    expires    DateTime
+
+    @@unique([identifier, token])
+}
+
+model BusinessProfile {
+    id               String   @id @default(cuid())
+    userId           String   @unique
+    companyName      String
+    industry         String
+    suppliers        Json
+    mission          String
+    description      String
+    isVerified       Boolean  @default(false)
+    /// PFD-aligned optional exposure: province, NAICS, revenue band, supplier countries, import %, markets, cost sensitivity, risk prefs, etc.
+    exposureProfile  Json?
+
+    user        User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+    products    Product[]
+    newsReports BusinessNewsReport[]
+}
+
+model Product {
+    id          String   @id @default(cuid())
+    businessId  String
+    name        String
+    description String
+    price       Decimal
+    inventory   Int
+    imageUrl    String?
+    tags        Json
+    createdAt   DateTime @default(now())
+
+    business BusinessProfile @relation(fields: [businessId], references: [id], onDelete: Cascade)
+    reviews  Review[]
+
+    @@index([businessId])
+}
+
+model Review {
+    id         String   @id @default(cuid())
+    productId  String
+    customerId String
+    rating     Int
+    body       String
+    createdAt  DateTime @default(now())
+
+    product  Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+    customer User    @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+    @@unique([productId, customerId])
+    @@index([productId])
+}
+
+model NewsArticle {
+    id          String   @id @default(cuid())
+    title       String
+    url         String   @unique
+    summary     String
+    tags        Json
+    publishedAt DateTime
+    createdAt   DateTime @default(now())
+
+    @@index([publishedAt])
+}
+
+model BusinessNewsReport {
+    id               String   @id @default(cuid())
+    businessId       String
+    reportTitle      String
+    reportBody       String
+    sourceArticleIds Json
+    /// Structured sections per PFD: whatChanged, howItAffects, whatToDo[], severity, disclaimer
+    reportSections   Json?
+    /// Watch | Caution | Act Now
+    severity         String?
+    createdAt        DateTime @default(now())
+
+    business BusinessProfile @relation(fields: [businessId], references: [id], onDelete: Cascade)
+
+    @@index([businessId])
+}
+
+/// Latest polled FX snapshot (Frankfurter / ECB-based CAD crosses). Used for economic intelligence context.
+model FxRateSnapshot {
+    id        String   @id @default(cuid())
+    base      String
+    quote     String
+    rate      Decimal
+    source    String
+    fetchedAt DateTime @default(now())
+
+    @@index([fetchedAt])
+    @@index([base, quote])
+}
