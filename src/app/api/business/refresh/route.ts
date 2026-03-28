@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { UserRole } from "../../../../../generated/prisma";
 import { env } from "~/env";
 import { syncFxSnapshotsFromFrankfurter } from "~/lib/actions/fx";
+import { isDiffyNewsIngestEnabled } from "~/lib/diffy";
 import { syncNewsArticlesFromDiffy } from "~/lib/news-sync";
 import { auth } from "~/lib/auth";
 import { getClientIp, rateLimit } from "~/lib/rate-limit";
@@ -12,7 +13,7 @@ export const runtime = "nodejs";
 /**
  * Free-tier friendly on-demand refresh (no Vercel Cron required).
  * - Always refreshes FX snapshots (Frankfurter).
- * - Refreshes Diffy news only when DIFFY_API_URL + DIFFY_API_KEY are set.
+ * - Refreshes Diffy news when `DIFFY_API_KEY` is set and a feed URL resolves (explicit `DIFFY_API_URL` or built-in URL on Vercel).
  */
 export async function POST(request: Request) {
   const session = await auth();
@@ -51,7 +52,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: message }, { status: 500 });
   }
 
-  if (env.DIFFY_API_URL && env.DIFFY_API_KEY) {
+  if (isDiffyNewsIngestEnabled()) {
     try {
       out.articlesSaved = await syncNewsArticlesFromDiffy();
     } catch (e: unknown) {

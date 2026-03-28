@@ -11,7 +11,7 @@ import {
   getRelevantNewsForBusiness,
   saveBusinessReport,
 } from "~/lib/actions/news";
-import { generateBusinessReport } from "~/lib/openai";
+import { generateBusinessReport, LlmConfigurationError } from "~/lib/openai";
 import { auth } from "~/lib/auth";
 
 const querySchema = z.object({
@@ -88,9 +88,17 @@ export async function POST() {
   } catch (e: unknown) {
     console.error("news-report POST:", e);
     const raw = e instanceof Error ? e.message : "Failed to generate business report";
-    const message = raw.includes("OPENAI_API_KEY")
-      ? "AI reporting is not configured (set OPENAI_API_KEY on the server)."
-      : raw;
+    const message =
+      e instanceof LlmConfigurationError
+        ? raw
+        : raw.includes("OPENAI_API_KEY") ||
+            raw.includes("GROQ_API_KEY") ||
+            raw.includes("OPENROUTER_API_KEY") ||
+            raw.includes("GEMINI_API_KEY") ||
+            raw.includes("OLLAMA_API_KEY") ||
+            raw.includes("LLM_PROVIDER")
+          ? "AI reporting is not configured. Set OPENAI_API_KEY, GROQ_API_KEY, OPENROUTER_API_KEY, or GEMINI_API_KEY (or LLM_PROVIDER=ollama with Ollama running). See .env.example."
+          : raw;
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }

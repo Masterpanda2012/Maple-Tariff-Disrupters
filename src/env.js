@@ -14,8 +14,32 @@ export const env = createEnv({
      */
     AUTH_URL: z.string().url().optional(),
     DATABASE_URL: z.string().min(1),
+    /**
+     * Which backend generates business reports. When unset, the first available credential wins:
+     * OpenAI → Groq → OpenRouter → Gemini → Ollama Cloud (OLLAMA_API_KEY); local Ollama needs LLM_PROVIDER=ollama.
+     */
+    LLM_PROVIDER: z
+      .enum(["openai", "groq", "openrouter", "gemini", "ollama"])
+      .optional(),
     OPENAI_API_KEY: z.string().min(1).optional(),
+    OPENAI_MODEL: z.string().optional(),
+    /** Groq (OpenAI-compatible). Free tier: console.groq.com */
+    GROQ_API_KEY: z.string().min(1).optional(),
+    GROQ_MODEL: z.string().optional(),
+    /** OpenRouter (OpenAI-compatible). https://openrouter.ai */
+    OPENROUTER_API_KEY: z.string().min(1).optional(),
+    OPENROUTER_MODEL: z.string().optional(),
+    OPENROUTER_HTTP_REFERER: z.string().url().optional(),
+    /** Google AI Studio / Gemini API key */
+    GEMINI_API_KEY: z.string().min(1).optional(),
+    GEMINI_MODEL: z.string().optional(),
+    /** Ollama Cloud (ollama.com); OpenAI client uses https://ollama.com/v1 with this as Bearer token */
+    OLLAMA_API_KEY: z.string().min(1).optional(),
+    /** Local Ollama OpenAI-compatible base when OLLAMA_API_KEY is unset, e.g. http://127.0.0.1:11434 */
+    OLLAMA_BASE_URL: z.string().url().optional(),
+    OLLAMA_MODEL: z.string().optional(),
     DIFFY_API_KEY: z.string().min(1).optional(),
+    /** Optional; on Vercel the built-in feed URL can be derived from `NEXT_PUBLIC_APP_URL`. */
     DIFFY_API_URL: z.string().url().optional(),
     CRON_SECRET: z.string().min(1).optional(),
     /** Google OAuth (optional). When both are set, “Continue with Google” is enabled. */
@@ -47,7 +71,19 @@ export const env = createEnv({
       process.env.NEXTAUTH_URL ??
       process.env.NEXT_PUBLIC_APP_URL,
     DATABASE_URL: process.env.DATABASE_URL,
+    LLM_PROVIDER: process.env.LLM_PROVIDER,
     OPENAI_API_KEY: process.env.OPENAI_API_KEY,
+    OPENAI_MODEL: process.env.OPENAI_MODEL,
+    GROQ_API_KEY: process.env.GROQ_API_KEY,
+    GROQ_MODEL: process.env.GROQ_MODEL,
+    OPENROUTER_API_KEY: process.env.OPENROUTER_API_KEY,
+    OPENROUTER_MODEL: process.env.OPENROUTER_MODEL,
+    OPENROUTER_HTTP_REFERER: process.env.OPENROUTER_HTTP_REFERER,
+    GEMINI_API_KEY: process.env.GEMINI_API_KEY,
+    GEMINI_MODEL: process.env.GEMINI_MODEL,
+    OLLAMA_API_KEY: process.env.OLLAMA_API_KEY,
+    OLLAMA_BASE_URL: process.env.OLLAMA_BASE_URL,
+    OLLAMA_MODEL: process.env.OLLAMA_MODEL,
     DIFFY_API_KEY: process.env.DIFFY_API_KEY,
     DIFFY_API_URL: process.env.DIFFY_API_URL,
     CRON_SECRET: process.env.CRON_SECRET,

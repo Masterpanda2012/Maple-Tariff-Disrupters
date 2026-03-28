@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 
 import { env } from "~/env";
 import { syncFxSnapshotsFromFrankfurter } from "~/lib/actions/fx";
+import { isDiffyNewsIngestEnabled } from "~/lib/diffy";
 import { syncNewsArticlesFromDiffy } from "~/lib/news-sync";
 
 function extractBearerToken(authorization: string | null): string | null {
@@ -15,7 +16,7 @@ function extractBearerToken(authorization: string | null): string | null {
 
 /**
  * Single daily job for Vercel Hobby (cron schedules must run at most once per day).
- * Runs FX sync always; runs Diffy news sync when both DIFFY_API_URL and DIFFY_API_KEY are set.
+ * Runs FX sync always; runs Diffy news sync when ingest is enabled (`DIFFY_API_KEY` + resolvable feed URL).
  */
 export async function GET(request: Request) {
   const secret = env.CRON_SECRET;
@@ -52,7 +53,7 @@ export async function GET(request: Request) {
     );
   }
 
-  if (env.DIFFY_API_URL && env.DIFFY_API_KEY) {
+  if (isDiffyNewsIngestEnabled()) {
     try {
       result.articlesSaved = await syncNewsArticlesFromDiffy();
     } catch (e: unknown) {

@@ -1,5 +1,48 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
+describe("resolvedDiffyApiUrl", () => {
+  beforeEach(() => {
+    vi.resetModules();
+    process.env.SKIP_ENV_VALIDATION = "1";
+    process.env.AUTH_SECRET = "test-auth-secret-for-vitest";
+    process.env.DATABASE_URL =
+      "postgresql://postgres:postgres@127.0.0.1:5432/vitest_dummy";
+    delete process.env.DIFFY_API_URL;
+    delete process.env.VERCEL;
+    delete process.env.VERCEL_URL;
+    delete process.env.NEXT_PUBLIC_APP_URL;
+  });
+
+  it("prefers explicit DIFFY_API_URL", async () => {
+    process.env.DIFFY_API_URL = "https://explicit.test/feed";
+    const { resolvedDiffyApiUrl } = await import("~/lib/diffy");
+    expect(resolvedDiffyApiUrl()).toBe("https://explicit.test/feed");
+  });
+
+  it("on Vercel uses NEXT_PUBLIC_APP_URL with trailing slash stripped", async () => {
+    process.env.VERCEL = "1";
+    process.env.NEXT_PUBLIC_APP_URL = "https://my.app/";
+    const { resolvedDiffyApiUrl } = await import("~/lib/diffy");
+    expect(resolvedDiffyApiUrl()).toBe(
+      "https://my.app/api/integrations/diffy-feed",
+    );
+  });
+
+  it("on Vercel falls back to VERCEL_URL when no public URL", async () => {
+    process.env.VERCEL = "1";
+    process.env.VERCEL_URL = "proj.vercel.app";
+    const { resolvedDiffyApiUrl } = await import("~/lib/diffy");
+    expect(resolvedDiffyApiUrl()).toBe(
+      "https://proj.vercel.app/api/integrations/diffy-feed",
+    );
+  });
+
+  it("returns undefined outside Vercel when DIFFY_API_URL is unset", async () => {
+    const { resolvedDiffyApiUrl } = await import("~/lib/diffy");
+    expect(resolvedDiffyApiUrl()).toBeUndefined();
+  });
+});
+
 describe("fetchLatestNews", () => {
   beforeEach(() => {
     process.env.DIFFY_API_URL = "https://diffy.example.test/api/news";

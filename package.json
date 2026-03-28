@@ -24,6 +24,7 @@
   },
   "dependencies": {
     "@auth/core": "^0.37.2",
+    "@google/generative-ai": "^0.24.1",
     "@prisma/adapter-pg": "^7.5.0",
     "@prisma/client": "^7.5.0",
     "@t3-oss/env-nextjs": "^0.12.0",
@@ -52,7 +53,7 @@
     "postcss": "^8.5.3",
     "prettier": "^3.5.3",
     "prettier-plugin-tailwindcss": "^0.6.11",
-    "prisma": "^7.5.0",
+    "prisma": "^6.12.0",
     "tailwindcss": "^4.0.15",
     "typescript": "^5.8.2",
     "typescript-eslint": "^8.27.0",

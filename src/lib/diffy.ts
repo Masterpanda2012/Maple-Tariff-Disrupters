@@ -2,13 +2,37 @@ import { env } from "~/env";
 import type { NewsArticle } from "../../generated/prisma";
 import { z } from "zod";
 
+const BUILTIN_FEED_PATH = "/api/integrations/diffy-feed";
+
+/**
+ * Effective news feed URL. Order:
+ * 1. `DIFFY_API_URL` if set (any external or explicit URL).
+ * 2. On Vercel (`VERCEL=1`): `{NEXT_PUBLIC_APP_URL}{BUILTIN_FEED_PATH}`, else `https://{VERCEL_URL}{...}`.
+ * 3. Otherwise unset (local dev should set `DIFFY_API_URL` to e.g. `http://localhost:3000/...`).
+ */
+export function resolvedDiffyApiUrl(): string | undefined {
+  if (env.DIFFY_API_URL) return env.DIFFY_API_URL;
+  if (process.env.VERCEL === "1") {
+    const base = env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, "");
+    if (base) return `${base}${BUILTIN_FEED_PATH}`;
+    const host = process.env.VERCEL_URL;
+    if (host) return `https://${host}${BUILTIN_FEED_PATH}`;
+  }
+  return undefined;
+}
+
+/** True when news ingest should run (shared secret + a resolvable feed URL). */
+export function isDiffyNewsIngestEnabled(): boolean {
+  return Boolean(env.DIFFY_API_KEY && resolvedDiffyApiUrl());
+}
+
 /**
  * Fetches the latest news from the configured Diffy (or compatible) HTTP endpoint and maps
  * each item to a `NewsArticle`-shaped object for persistence or display.
  *
  * **Happy path:** 200 response with a JSON array or an object containing an array under
  * `articles`, `data`, `items`, or `results`; each item yields a normalized row.
- * **Bad path:** Missing `DIFFY_API_URL` / `DIFFY_API_KEY`, non-OK HTTP status, or JSON that
+ * **Bad path:** Missing resolvable URL / `DIFFY_API_KEY`, non-OK HTTP status, or JSON that
  * does not match the expected shapes — throws `Error` with a short message.
  * **Edge cases:** Unknown fields are ignored; missing `summary` becomes `""`; `tags` may be
  * an array of strings, a comma-separated string, or omitted (defaults to `[]`); timestamps
@@ -16,10 +40,12 @@ import { z } from "zod";
  * failing the whole batch.
  */
 export async function fetchLatestNews(): Promise<NewsArticle[]> {
-  const url = env.DIFFY_API_URL;
+  const url = resolvedDiffyApiUrl();
   const apiKey = env.DIFFY_API_KEY;
   if (!url) {
-    throw new Error("DIFFY_API_URL is not configured");
+    throw new Error(
+      "Diffy feed URL is not configured. Set DIFFY_API_URL, or on Vercel set NEXT_PUBLIC_APP_URL (built-in path is appended automatically).",
+    );
   }
   if (!apiKey) {
     throw new Error("DIFFY_API_KEY is not configured");
