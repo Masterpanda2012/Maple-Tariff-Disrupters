@@ -38,5 +38,10 @@
     "**/*.js",
     ".next/types/**/*.ts"
   ],
-  "exclude": ["node_modules", "generated", "canadian-commerce-ui"]
+  "exclude": [
+    "node_modules",
+    "generated",
+    "canadian-commerce-ui",
+    "eslint.config.js"
+  ]
 }

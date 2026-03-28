@@ -1,5 +1,17 @@
-import { FlatCompat } from "@eslint/eslintrc";
+import * as eslintrc from "@eslint/eslintrc";
 import tseslint from "typescript-eslint";
+
+/** ESM named export locally; some bundlers expose `default.FlatCompat` (e.g. Next on Vercel). */
+const FlatCompat =
+  eslintrc.FlatCompat ??
+  (typeof eslintrc.default === "object" && eslintrc.default !== null
+    ? /** @type {{ FlatCompat: (typeof eslintrc)["FlatCompat"] }} */ (
+        eslintrc.default
+      ).FlatCompat
+    : undefined);
+if (!FlatCompat) {
+  throw new Error("@eslint/eslintrc: FlatCompat not found");
+}
 
 const compat = new FlatCompat({
   baseDirectory: import.meta.dirname,
