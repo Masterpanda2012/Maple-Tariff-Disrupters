@@ -1,6 +1,29 @@
 import { createEnv } from "@t3-oss/env-nextjs";
 import { z } from "zod";
 
+/**
+ * Optional URL fields often break deploys when pasted without `https://`, with
+ * whitespace, or with a mistaken value. Invalid values become `undefined` so
+ * auth and other routes do not 500 during `createEnv`.
+ */
+function parseOptionalUrl(value) {
+  if (value === undefined || value === null) return undefined;
+  const s = String(value).trim();
+  if (s === "") return undefined;
+  const withScheme = /^https?:\/\//i.test(s)
+    ? s
+    : `https://${s.replace(/^\/+/, "")}`;
+  try {
+    const u = new URL(withScheme);
+    if (u.pathname === "/" && u.search === "" && u.hash === "") {
+      return u.origin;
+    }
+    return u.href;
+  } catch {
+    return undefined;
+  }
+}
+
 export const env = createEnv({
   /**
    * Specify your server-side environment variables schema here. This way you can ensure the app
@@ -18,9 +41,19 @@ export const env = createEnv({
      * Which backend generates business reports. When unset, the first available credential wins:
      * OpenAI → Groq → OpenRouter → Gemini → Ollama Cloud (OLLAMA_API_KEY); local Ollama needs LLM_PROVIDER=ollama.
      */
-    LLM_PROVIDER: z
-      .enum(["openai", "groq", "openrouter", "gemini", "ollama"])
-      .optional(),
+    LLM_PROVIDER: z.preprocess((v) => {
+      const allowed = new Set([
+        "openai",
+        "groq",
+        "openrouter",
+        "gemini",
+        "ollama",
+      ]);
+      if (v === undefined || v === null) return undefined;
+      const s = String(v).trim().toLowerCase();
+      if (s === "") return undefined;
+      return allowed.has(s) ? s : undefined;
+    }, z.enum(["openai", "groq", "openrouter", "gemini", "ollama"]).optional()),
     OPENAI_API_KEY: z.string().min(1).optional(),
     OPENAI_MODEL: z.string().optional(),
     /** Groq (OpenAI-compatible). Free tier: console.groq.com */
@@ -67,9 +100,9 @@ export const env = createEnv({
   runtimeEnv: {
     AUTH_SECRET: process.env.NEXTAUTH_SECRET ?? process.env.AUTH_SECRET,
     AUTH_URL:
-      process.env.AUTH_URL ??
-      process.env.NEXTAUTH_URL ??
-      process.env.NEXT_PUBLIC_APP_URL,
+      parseOptionalUrl(process.env.AUTH_URL) ??
+      parseOptionalUrl(process.env.NEXTAUTH_URL) ??
+      parseOptionalUrl(process.env.NEXT_PUBLIC_APP_URL),
     DATABASE_URL: process.env.DATABASE_URL,
     LLM_PROVIDER: process.env.LLM_PROVIDER,
     OPENAI_API_KEY: process.env.OPENAI_API_KEY,
@@ -78,19 +111,19 @@ export const env = createEnv({
     GROQ_MODEL: process.env.GROQ_MODEL,
     OPENROUTER_API_KEY: process.env.OPENROUTER_API_KEY,
     OPENROUTER_MODEL: process.env.OPENROUTER_MODEL,
-    OPENROUTER_HTTP_REFERER: process.env.OPENROUTER_HTTP_REFERER,
+    OPENROUTER_HTTP_REFERER: parseOptionalUrl(process.env.OPENROUTER_HTTP_REFERER),
     GEMINI_API_KEY: process.env.GEMINI_API_KEY,
     GEMINI_MODEL: process.env.GEMINI_MODEL,
     OLLAMA_API_KEY: process.env.OLLAMA_API_KEY,
-    OLLAMA_BASE_URL: process.env.OLLAMA_BASE_URL,
+    OLLAMA_BASE_URL: parseOptionalUrl(process.env.OLLAMA_BASE_URL),
     OLLAMA_MODEL: process.env.OLLAMA_MODEL,
     DIFFY_API_KEY: process.env.DIFFY_API_KEY,
-    DIFFY_API_URL: process.env.DIFFY_API_URL,
+    DIFFY_API_URL: parseOptionalUrl(process.env.DIFFY_API_URL),
     CRON_SECRET: process.env.CRON_SECRET,
     GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
     GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
     NODE_ENV: process.env.NODE_ENV,
-    NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
+    NEXT_PUBLIC_APP_URL: parseOptionalUrl(process.env.NEXT_PUBLIC_APP_URL),
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

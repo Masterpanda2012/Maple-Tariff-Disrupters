@@ -29,6 +29,8 @@ Run tests with `npm test`; lint with `npm run lint`.
 4. Set `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` in `.env`. The login and register pages show **Continue with Google** when both are set.
 5. New Google users are stored like email users; on **Register**, the selected **Business** or **Customer** tab is applied via a short-lived cookie. Existing Google users keep their saved role.
 
+**Env validation:** If `/api/auth/*` returns 500 with `Invalid environment variables`, fix or remove mistaken Vercel values—especially **`NEXTAUTH_URL` / `AUTH_URL`** (must be a full URL with `https://`, or leave unset), **`NEXT_PUBLIC_APP_URL`** (no stray spaces), optional **`DIFFY_API_URL` / `OLLAMA_BASE_URL` / `OPENROUTER_HTTP_REFERER`**, or a typo in **`LLM_PROVIDER`**.
+
 **Stable URL (important on Vercel):** Google only allows **exact** origins and redirect URIs—no wildcards. Each **preview** deployment gets its own hostname (`…-git-branch-….vercel.app`), which changes and is impractical to register one-by-one. **Use one canonical URL everywhere:** set `NEXT_PUBLIC_APP_URL` to your **production** domain from Vercel **Project → Settings → Domains** (or a custom domain you attach there), and add **that same host** in Google Cloud. Test **Continue with Google** on that production URL, not on random preview links. If you need Google on previews too, enable **Preview** for `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` in Vercel and register **each** preview origin and `{origin}/api/auth/callback/google` in Google Cloud (or accept Google only on production).
 
 ## Deploy on Vercel
