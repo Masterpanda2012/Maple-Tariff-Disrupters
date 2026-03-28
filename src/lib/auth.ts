@@ -114,12 +114,22 @@ export const authOptions = {
   },
   providers,
   callbacks: {
+    signIn: async ({ account, profile }) => {
+      if (account?.provider !== "google") return true;
+      const p = profile as GoogleProfile | null | undefined;
+      if (!p?.email?.trim()) {
+        console.error("[auth] Google sign-in rejected: profile has no email");
+        return false;
+      }
+      return true;
+    },
     jwt: async ({ token, user, account, profile }) => {
       if (account?.provider === "google") {
         const p = profile as GoogleProfile | null | undefined;
         const emailRaw = p?.email;
         if (!emailRaw) {
-          return token;
+          console.error("[auth] Google JWT: missing email after signIn");
+          throw new Error("Google OAuth profile missing email");
         }
         const email = emailRaw.toLowerCase();
 
@@ -135,29 +145,40 @@ export const authOptions = {
             if (raw === UserRole.BUSINESS || raw === UserRole.CUSTOMER) {
               intendedRole = raw;
             }
-            cookieStore.delete("oauth_intended_role");
+            // Do not call cookieStore.delete here: Next.js 15 can reject cookie
+            // mutation outside limited contexts; the cookie expires in 10 minutes.
           } catch {
             /* cookies unavailable */
           }
 
-          dbUser = await db.user.create({
-            data: {
-              username: email,
-              email,
-              passwordHash: await hash(randomUUID(), 12),
-              name: p?.name ?? email.split("@")[0] ?? email,
-              image: p?.picture ?? undefined,
-              role: intendedRole,
-            },
-          });
-        } else {
           try {
-            const cookieStore = await cookies();
-            cookieStore.delete("oauth_intended_role");
-          } catch {
-            /* cookies unavailable */
+            dbUser = await db.user.create({
+              data: {
+                username: email,
+                email,
+                passwordHash: await hash(randomUUID(), 12),
+                name: p?.name ?? email.split("@")[0] ?? email,
+                image: p?.picture ?? undefined,
+                role: intendedRole,
+              },
+            });
+          } catch (e: unknown) {
+            const isUniqueViolation =
+              typeof e === "object" &&
+              e !== null &&
+              "code" in e &&
+              (e as { code: string }).code === "P2002";
+            if (isUniqueViolation) {
+              dbUser = await db.user.findFirst({
+                where: { OR: [{ email }, { username: email }] },
+              });
+            }
+            if (!dbUser) {
+              console.error("[auth] Google user create failed:", e);
+              throw e;
+            }
           }
-
+        } else {
           const update: { image?: string | null; name?: string | null } = {};
           if (p?.picture && dbUser.image !== p.picture) {
             update.image = p.picture;
@@ -166,10 +187,14 @@ export const authOptions = {
             update.name = p.name;
           }
           if (Object.keys(update).length > 0) {
-            dbUser = await db.user.update({
-              where: { id: dbUser.id },
-              data: update,
-            });
+            try {
+              dbUser = await db.user.update({
+                where: { id: dbUser.id },
+                data: update,
+              });
+            } catch (e) {
+              console.error("[auth] Google profile sync failed:", e);
+            }
           }
         }
 
