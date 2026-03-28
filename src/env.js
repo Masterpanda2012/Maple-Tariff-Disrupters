@@ -6,6 +6,7 @@ import { z } from "zod";
  * whitespace, or with a mistaken value. Invalid values become `undefined` so
  * auth and other routes do not 500 during `createEnv`.
  */
+/** @param {string | undefined | null} value */
 function parseOptionalUrl(value) {
   if (value === undefined || value === null) return undefined;
   const s = String(value).trim();
