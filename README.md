@@ -31,6 +31,8 @@ Run tests with `npm test`; lint with `npm run lint`.
 
 ## Deploy on Vercel
 
+Use **Node ≥ 20.19** (set in Vercel → Project → Settings → General, or rely on `engines.node` in `package.json`). Prisma 7 and `@prisma/client` require this; older defaults can make `npm install` / `prisma generate` fail.
+
 1. Create a **PostgreSQL** database (e.g. [Neon](https://neon.tech)) and copy the connection string.
 2. In the Vercel project → **Settings → Environment Variables**, add at least:
    - `DATABASE_URL` — Postgres URL (with `sslmode=require` if your host requires it)
