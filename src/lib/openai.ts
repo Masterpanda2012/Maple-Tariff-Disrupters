@@ -74,6 +74,16 @@ export class BusinessReportResponseError extends Error {
   }
 }
 
+function envString(value: string | undefined, fallback: string): string {
+  const v = value?.trim();
+  return v && v.length > 0 ? v : fallback;
+}
+
+function envUrlBase(value: string | undefined, fallback: string): string {
+  const v = value?.replace(/\/$/, "");
+  return v && v.length > 0 ? v : fallback;
+}
+
 function resolveLlmProvider(): LlmProviderId | null {
   if (env.LLM_PROVIDER) return env.LLM_PROVIDER;
   if (env.OPENAI_API_KEY) return "openai";
@@ -87,18 +97,18 @@ function resolveLlmProvider(): LlmProviderId | null {
 function modelForProvider(provider: LlmProviderId): string {
   switch (provider) {
     case "openai":
-      return env.OPENAI_MODEL?.trim() || DEFAULT_OPENAI_MODEL;
+      return envString(env.OPENAI_MODEL, DEFAULT_OPENAI_MODEL);
     case "groq":
-      return env.GROQ_MODEL?.trim() || DEFAULT_GROQ_MODEL;
+      return envString(env.GROQ_MODEL, DEFAULT_GROQ_MODEL);
     case "openrouter":
-      return env.OPENROUTER_MODEL?.trim() || DEFAULT_OPENROUTER_MODEL;
+      return envString(env.OPENROUTER_MODEL, DEFAULT_OPENROUTER_MODEL);
     case "gemini":
-      return env.GEMINI_MODEL?.trim() || DEFAULT_GEMINI_MODEL;
+      return envString(env.GEMINI_MODEL, DEFAULT_GEMINI_MODEL);
     case "ollama":
       if (env.OLLAMA_API_KEY) {
-        return env.OLLAMA_MODEL?.trim() || DEFAULT_OLLAMA_CLOUD_MODEL;
+        return envString(env.OLLAMA_MODEL, DEFAULT_OLLAMA_CLOUD_MODEL);
       }
-      return env.OLLAMA_MODEL?.trim() || DEFAULT_OLLAMA_LOCAL_MODEL;
+      return envString(env.OLLAMA_MODEL, DEFAULT_OLLAMA_LOCAL_MODEL);
     default: {
       const _: never = provider;
       return _;
@@ -406,8 +416,7 @@ async function runLlmReport(
           user,
         });
       } else {
-        const base =
-          env.OLLAMA_BASE_URL?.replace(/\/$/, "") || DEFAULT_OLLAMA_BASE;
+        const base = envUrlBase(env.OLLAMA_BASE_URL, DEFAULT_OLLAMA_BASE);
         raw = await completeOpenAiCompatibleJson({
           baseURL: `${base}/v1`,
           apiKey: "ollama",
