@@ -16,6 +16,10 @@ function run(command, args, env = process.env) {
   }
 }
 
+/** Client must exist before migrate / Next compile (postinstall is avoided for flaky Vercel installs). */
+console.log("[build] prisma generate");
+run("npx", ["prisma", "generate"]);
+
 const hasDatabaseUrl = Boolean(process.env.DATABASE_URL?.trim());
 
 if (hasDatabaseUrl) {

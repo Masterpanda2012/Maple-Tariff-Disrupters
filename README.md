@@ -31,7 +31,7 @@ Run tests with `npm test`; lint with `npm run lint`.
 
 ## Deploy on Vercel
 
-Use **Node ≥ 20.19** (set in Vercel → Project → Settings → General, or rely on `engines.node` in `package.json`). Prisma 7 and `@prisma/client` require this; older defaults can make `npm install` / `prisma generate` fail.
+Use **Node ≥ 20.19** (Vercel → Project → Settings → General → Node.js Version). Prisma 7 requires it for `prisma generate`, which runs at **build** time (and before `dev` / `test`), not during `npm install`—so installs stay simple on CI and Vercel.
 
 1. Create a **PostgreSQL** database (e.g. [Neon](https://neon.tech)) and copy the connection string.
 2. In the Vercel project → **Settings → Environment Variables**, add at least:

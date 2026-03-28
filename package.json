@@ -14,15 +14,15 @@
     "db:migrate": "prisma migrate deploy",
     "db:push": "prisma db push",
     "db:studio": "prisma studio",
-    "dev": "next dev --turbo",
+    "dev": "prisma generate && next dev --turbo",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,mdx}\" --cache",
     "format:write": "prettier --write \"**/*.{ts,tsx,js,jsx,mdx}\" --cache",
-    "postinstall": "prisma generate",
     "lint": "next lint",
     "lint:fix": "next lint --fix",
     "preview": "next build && next start",
     "start": "next start",
     "typecheck": "tsc --noEmit",
+    "pretest": "prisma generate",
     "test": "vitest run"
   },
   "dependencies": {
@@ -64,6 +64,5 @@
   },
   "ct3aMetadata": {
     "initVersion": "7.40.0"
-  },
-  "packageManager": "npm@11.6.2"
+  }
 }
