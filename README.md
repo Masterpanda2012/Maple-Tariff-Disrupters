@@ -31,7 +31,9 @@ Run tests with `npm test`; lint with `npm run lint`.
 
 ## Deploy on Vercel
 
-Use **Node ≥ 20.19** (Vercel → Project → Settings → General → Node.js Version). Prisma 7 requires it for `prisma generate`, which runs at **build** time (and before `dev` / `test`), not during `npm install`—so installs stay simple on CI and Vercel.
+Use **Node 22.x** locally and on Vercel (`package.json` `engines`, plus `.nvmrc`). Prisma 7’s **preinstall** rejects Node **20.10–20.18** (common old defaults); that was the usual cause of `npm install` exiting with 1. On Vercel: **Settings → General → Node.js Version → 22.x** (or leave **Automatic** so `engines` / `.nvmrc` apply). `prisma generate` runs during **`npm run build`**, not during install.
+
+If the log shows **Installing dependencies… added N packages** with no error, install succeeded. The next lines are **`[build] prisma generate`** then **`prisma migrate deploy`** (only if `DATABASE_URL` is set). If the build fails after that, scroll to the **first red error**—often missing `DATABASE_URL`, migration errors, or Next/env validation.
 
 1. Create a **PostgreSQL** database (e.g. [Neon](https://neon.tech)) and copy the connection string.
 2. In the Vercel project → **Settings → Environment Variables**, add at least:
