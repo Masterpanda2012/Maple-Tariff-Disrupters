@@ -2,11 +2,12 @@
 
 import { motion, useReducedMotion } from "framer-motion";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { getSession, signIn } from "next-auth/react";
 import { useEffect, useState } from "react";
 
 import { GoogleSignInButton } from "~/app/_components/google-sign-in-button";
+import { messageForOAuthError } from "~/lib/oauth-login-errors";
 
 type RoleTab = "business" | "customer";
 type AppRole = "BUSINESS" | "CUSTOMER";
@@ -22,6 +23,7 @@ export function RegisterForm({
   googleAuthEnabled: boolean;
 }) {
   const router = useRouter();
+  const pathname = usePathname();
   const searchParams = useSearchParams();
   const reduceMotion = useReducedMotion();
   const [roleTab, setRoleTab] = useState<RoleTab>("customer");
@@ -36,6 +38,18 @@ export function RegisterForm({
     if (type === "business") setRoleTab("business");
     if (type === "customer") setRoleTab("customer");
   }, [searchParams]);
+
+  useEffect(() => {
+    const code = searchParams.get("error");
+    const msg = messageForOAuthError(code);
+    if (!msg) return;
+    setError(msg);
+    const next = new URLSearchParams(searchParams.toString());
+    next.delete("error");
+    next.delete("code");
+    const qs = next.toString();
+    router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
+  }, [pathname, router, searchParams]);
 
   const selectedRole =
     roleTab === "business" ? "BUSINESS" : "CUSTOMER";
@@ -71,12 +85,29 @@ export function RegisterForm({
         redirect: false,
       });
       if (signInResult?.error) {
-        setError("Account created but sign-in failed. Try logging in.");
+        setError(
+          messageForOAuthError(signInResult.error) ??
+            "Account created but sign-in failed. Try logging in.",
+        );
         router.push("/login");
         return;
       }
-      const session = await getSession();
-      const role = (session?.user?.role as AppRole | undefined) ?? selectedRole;
+      let session;
+      try {
+        session = await getSession();
+      } catch {
+        setError(
+          "Account created, but session could not load. Check NEXT_PUBLIC_APP_URL on Vercel, then log in manually.",
+        );
+        router.push("/login");
+        return;
+      }
+      if (!session?.user) {
+        setError("Account created. Please log in with your new password.");
+        router.push("/login");
+        return;
+      }
+      const role = (session.user.role as AppRole | undefined) ?? selectedRole;
       const callbackUrl = safeCallbackPath(searchParams.get("callbackUrl"));
       const defaultPath =
         role === "BUSINESS" ? "/business/dashboard" : "/marketplace";

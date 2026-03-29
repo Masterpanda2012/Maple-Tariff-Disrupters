@@ -7,6 +7,7 @@ import { getSession, signIn } from "next-auth/react";
 import { useEffect, useState } from "react";
 
 import { GoogleSignInButton } from "~/app/_components/google-sign-in-button";
+import { messageForOAuthError } from "~/lib/oauth-login-errors";
 
 type AppRole = "BUSINESS" | "CUSTOMER";
 
@@ -14,24 +15,6 @@ function safeCallbackPath(raw: string | null): string | null {
   if (!raw || !raw.startsWith("/") || raw.startsWith("//")) return null;
   return raw;
 }
-
-const OAUTH_ERROR_FALLBACK =
-  "Sign-in did not complete. Please try again." as const;
-
-const oauthErrorMessages: Record<string, string> = {
-  Configuration:
-    "Sign-in is misconfigured. Check server environment and try again.",
-  AccessDenied: "Access was denied. Try another account or sign-in method.",
-  Verification: "The sign-in link expired or was already used.",
-  OAuthSignin: "Could not start the provider sign-in flow.",
-  OAuthCallback: "Sign-in was interrupted. Please try again.",
-  OAuthCreateAccount: "Could not create an account from this provider.",
-  EmailCreateAccount: "Could not create an account with email.",
-  Callback: "Something went wrong during sign-in.",
-  OAuthAccountNotLinked:
-    "This email is already registered. Sign in with your password first, then you can link Google from account settings when available.",
-  SessionRequired: "Please sign in to continue.",
-};
 
 export function LoginForm({ googleAuthEnabled }: { googleAuthEnabled: boolean }) {
   const router = useRouter();
@@ -46,10 +29,12 @@ export function LoginForm({ googleAuthEnabled }: { googleAuthEnabled: boolean })
 
   useEffect(() => {
     const code = searchParams.get("error");
-    if (!code) return;
-    setError(oauthErrorMessages[code] ?? OAUTH_ERROR_FALLBACK);
+    const msg = messageForOAuthError(code);
+    if (!msg) return;
+    setError(msg);
     const next = new URLSearchParams(searchParams.toString());
     next.delete("error");
+    next.delete("code");
     const qs = next.toString();
     router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
   }, [pathname, router, searchParams]);
@@ -66,11 +51,27 @@ export function LoginForm({ googleAuthEnabled }: { googleAuthEnabled: boolean })
         redirect: false,
       });
       if (result?.error) {
-        setError("Invalid email or password.");
+        setError(
+          messageForOAuthError(result.error) ?? "Invalid email or password.",
+        );
         return;
       }
-      const session = await getSession();
-      const role = (session?.user?.role as AppRole | undefined) ?? "CUSTOMER";
+      let session;
+      try {
+        session = await getSession();
+      } catch {
+        setError(
+          "Signed in, but the session could not load. Check NEXT_PUBLIC_APP_URL on Vercel matches your site URL, then refresh.",
+        );
+        return;
+      }
+      if (!session?.user) {
+        setError(
+          "Signed in, but no session was returned. Redeploy with correct AUTH_SECRET and site URL, then try again.",
+        );
+        return;
+      }
+      const role = (session.user.role as AppRole | undefined) ?? "CUSTOMER";
       const callbackUrl = safeCallbackPath(searchParams.get("callbackUrl"));
       const defaultPath =
         role === "BUSINESS" ? "/business/dashboard" : "/marketplace";
