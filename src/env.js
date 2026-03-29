@@ -26,6 +26,22 @@ function parseOptionalUrl(value) {
 }
 
 export const env = createEnv({
+  onValidationError: (issues) => {
+    const fields = [
+      ...new Set(
+        issues.map((i) =>
+          Array.isArray(i.path) && i.path.length > 0
+            ? String(i.path[0])
+            : "unknown",
+        ),
+      ),
+    ].join(", ");
+    console.error("[env] Invalid environment variables — check:", fields);
+    console.error("[env] Details:", issues);
+    throw new Error(
+      `Invalid environment variables: ${fields}. If this is a Vercel Preview URL, enable DATABASE_URL + AUTH_SECRET (and other secrets) for Preview, or use “Link to Production”.`,
+    );
+  },
   /**
    * Specify your server-side environment variables schema here. This way you can ensure the app
    * isn't built with invalid env vars.
