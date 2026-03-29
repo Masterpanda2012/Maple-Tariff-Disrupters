@@ -6,6 +6,21 @@ import { z } from "zod";
  * whitespace, or with a mistaken value. Invalid values become `undefined` so
  * auth and other routes do not 500 during `createEnv`.
  */
+/**
+ * First non-empty trimmed value from process.env[name] for each name in order.
+ * Vercel Postgres often exposes `POSTGRES_PRISMA_URL` / `POSTGRES_URL` without `DATABASE_URL`.
+ * @param {string[]} names
+ */
+function firstEnv(...names) {
+  for (const name of names) {
+    const raw = process.env[name];
+    if (raw === undefined || raw === null) continue;
+    const s = String(raw).trim();
+    if (s !== "") return s;
+  }
+  return undefined;
+}
+
 /** @param {string | undefined | null} value */
 function parseOptionalUrl(value) {
   if (value === undefined || value === null) return undefined;
@@ -115,12 +130,16 @@ export const env = createEnv({
    * middlewares) or client-side so we need to destruct manually.
    */
   runtimeEnv: {
-    AUTH_SECRET: process.env.NEXTAUTH_SECRET ?? process.env.AUTH_SECRET,
+    AUTH_SECRET: firstEnv("NEXTAUTH_SECRET", "AUTH_SECRET"),
     AUTH_URL:
       parseOptionalUrl(process.env.AUTH_URL) ??
       parseOptionalUrl(process.env.NEXTAUTH_URL) ??
       parseOptionalUrl(process.env.NEXT_PUBLIC_APP_URL),
-    DATABASE_URL: process.env.DATABASE_URL,
+    DATABASE_URL: firstEnv(
+      "DATABASE_URL",
+      "POSTGRES_PRISMA_URL",
+      "POSTGRES_URL",
+    ),
     LLM_PROVIDER: process.env.LLM_PROVIDER,
     OPENAI_API_KEY: process.env.OPENAI_API_KEY,
     OPENAI_MODEL: process.env.OPENAI_MODEL,
