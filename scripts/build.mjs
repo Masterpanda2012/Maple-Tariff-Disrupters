@@ -20,7 +20,12 @@ function run(command, args, env = process.env) {
 console.log("[build] prisma generate");
 run("npx", ["prisma", "generate"]);
 
-const hasDatabaseUrl = Boolean(process.env.DATABASE_URL?.trim());
+const buildDatabaseUrl =
+  process.env.DATABASE_URL?.trim() ||
+  process.env.POSTGRES_PRISMA_URL?.trim() ||
+  process.env.POSTGRES_URL?.trim() ||
+  "";
+const hasDatabaseUrl = Boolean(buildDatabaseUrl);
 
 if (hasDatabaseUrl) {
   console.log("[build] DATABASE_URL found. Running prisma migrate deploy.");

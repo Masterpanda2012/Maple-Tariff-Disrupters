@@ -259,6 +259,15 @@ export const authOptions = {
 const { auth: uncachedAuth, handlers, signIn, signOut } =
   NextAuth(authOptions);
 
+/** Next.js throws this during static generation when `auth()` touches request APIs. */
+function isDynamicServerUsage(error: unknown): boolean {
+  if (typeof error !== "object" || error === null) return false;
+  const e = error as { digest?: string; message?: string; description?: string };
+  if (e.digest === "DYNAMIC_SERVER_USAGE") return true;
+  const text = `${e.message ?? ""} ${e.description ?? ""}`;
+  return /dynamic server usage/i.test(text);
+}
+
 /**
  * Wrap Auth.js `auth()` so a failed internal session fetch (bad AUTH_URL, network,
  * etc.) returns `null` instead of taking down the whole RSC tree with a 500.
@@ -268,6 +277,7 @@ async function authSafe(): Promise<Session | null> {
   try {
     return await uncachedAuth();
   } catch (e) {
+    if (isDynamicServerUsage(e)) return null;
     console.error("[next-auth] auth() failed:", e);
     return null;
   }
