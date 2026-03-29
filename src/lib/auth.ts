@@ -3,7 +3,11 @@ import { randomUUID } from "node:crypto";
 import { cookies } from "next/headers";
 import { cache } from "react";
 import NextAuth from "next-auth";
-import { type DefaultSession, type NextAuthConfig } from "next-auth";
+import {
+  type DefaultSession,
+  type NextAuthConfig,
+  type Session,
+} from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import Google from "next-auth/providers/google";
 import { z } from "zod";
@@ -234,10 +238,12 @@ export const authOptions = {
           ? t.picture
           : undefined;
 
+      const base = session.user ?? {};
+
       return {
         ...session,
         user: {
-          ...session.user,
+          ...base,
           id,
           username,
           role,
@@ -253,5 +259,19 @@ export const authOptions = {
 const { auth: uncachedAuth, handlers, signIn, signOut } =
   NextAuth(authOptions);
 
-export const auth = cache(uncachedAuth);
+/**
+ * Wrap Auth.js `auth()` so a failed internal session fetch (bad AUTH_URL, network,
+ * etc.) returns `null` instead of taking down the whole RSC tree with a 500.
+ * (Keep the zero-arg signature only — the app does not use other `auth` overloads.)
+ */
+async function authSafe(): Promise<Session | null> {
+  try {
+    return await uncachedAuth();
+  } catch (e) {
+    console.error("[next-auth] auth() failed:", e);
+    return null;
+  }
+}
+
+export const auth = cache(authSafe) as typeof uncachedAuth;
 export { handlers, signIn, signOut };
